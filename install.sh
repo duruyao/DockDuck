@@ -29,11 +29,11 @@ while (($#)); do
 
   --prefix)
     if [ -z "$2" ]; then
-      echo "Error: $1 requires a non empty argument" >&2
+      printf "\033[1;32;31m%s\033[m\n" "Error: $1 requires a non empty argument" >&2
       show_usage >&2
       exit 1
     elif [ ! -d "$2" ]; then
-      echo "Error: No such directory: $2" >&2
+      printf "\033[1;32;31m%s\033[m\n" "Error: No such directory: $2" >&2
       show_usage >&2
       exit 1
     else
@@ -43,7 +43,7 @@ while (($#)); do
     ;;
 
   --* | -* | *)
-    echo "Error: Unknown flag: $1" >&2
+    printf "\033[1;32;31m%s\033[m\n" "Error: Unknown flag: $1" >&2
     show_usage >&2
     exit 1
     ;;
