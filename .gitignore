@@ -1,3 +1,18 @@
+# Cache files for JetBrains IDE
+*.idea/
+
+# Temp files
+*.tmp*
+*.old*
+*.bak*
+*.swp
+*~
+
+# Commitizen
+node_modules/
+package.json
+package-lock.json
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
