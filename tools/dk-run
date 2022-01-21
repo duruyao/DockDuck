@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+
+## date:   2022-01-21
+## author: duruao@gmail.com
+## desc:   run Docker Image which was added develop kit layer by DockerDK
+
+function show_usage() {
+  cat <<EOF
+Usage: $0 [-h|--help] [-n|--name CONTAINER_NAME] <DOCKER_DK_IMAGE> [-c|--command COMMAND]
+
+-h, --help
+    Display this help message.
+
+-n, --name CONTAINER_NAME
+    Set the name of Docker Container (default: "$USER.IMAGE-TAG").
+
+DOCKER_DK_IMAGE
+    Specify an existing Docker Image which was added develop kit layer by DockerDK.
+
+-c, --command COMMAND
+    Set the command to be run inside the Docker Container (default: "/bin/bash").
+
+EOF
+}
+
+container_list_path="${HOME}/.DockerDK/containers"
+mkdir -p "$(dirname "${container_list_path}")"
+
+docker_dk_image=""
+container_name=""
+command="/bin/bash"
+
+## parse arguments
+while (($#)); do
+  case "$1" in
+  -h | --help)
+    show_usage
+    exit 0
+    ;;
+
+  -c | --command)
+    if [ -z "$2" ]; then
+      printf "\033[1;32;31m%s\033[m\n" "Error: $1 requires a non empty argument" >&2
+      show_usage >&2
+      exit 1
+    fi
+    command="$2"
+    shift 2
+    ;;
+
+  -n | --name)
+    if [ -z "$2" ]; then
+      printf "\033[1;32;31m%s\033[m\n" "Error: $1 requires a non empty argument" >&2
+      show_usage >&2
+      exit 1
+    fi
+    container_name="$2"
+    shift 2
+    ;;
+
+  --* | -*)
+    printf "\033[1;32;31m%s\033[m\n" "Error: Unknown flag: $1" >&2
+    show_usage >&2
+    exit 1
+    ;;
+
+  *)
+    docker_dk_image="$1"
+    #shellcheck disable=SC2001
+    image_repository="$(echo "${docker_dk_image}" | sed "s/\:.*//")"
+    # shellcheck disable=SC2001
+    tag="$(echo "${docker_dk_image}" | sed "s/.*\://")"
+    # shellcheck disable=SC2143
+    if [ -z "$(docker images | grep "${image_repository} .*${tag}")" ]; then
+      printf "\033[1;32;31m%s\033[m\n" "Error: No such Docker Image: $2" >&2
+      show_usage >&2
+      exit 1
+    fi
+    #shellcheck disable=SC2001
+    image="$(echo "${image_repository}" | sed "s/.*\///")"
+    if [ -z "${container_name}" ]; then
+      container_name="${USER}.${image}-${tag}"
+    fi
+    shift 1
+    ;;
+  esac
+done
+if [ -z "${docker_dk_image}" ]; then
+  printf "\033[1;32;31m%s\033[m\n" "Error: DOCKER_DK_IMAGE is required" >&2
+  show_usage >&2
+  exit 1
+fi
+
+echo "+ nvidia-docker run --name ${container_name} -v ${PWD}:${PWD} ${docker_dk_image} ${command}"
