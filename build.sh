@@ -64,6 +64,7 @@ while (($#)); do
 
   *)
     new_image="$1"
+    shift 1
     ;;
   esac
 done
