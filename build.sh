@@ -12,10 +12,10 @@ Usage: $0 [-h|--help] [--basic-image BASIC_IMAGE_REPOSITORY:BASIC_IMAGE_TAG] [NE
     Display this help message.
 
 --basic-image BASIC_IMAGE_REPOSITORY:BASIC_IMAGE_TAG
-    An existing Docker Image as basic image (default: "ubuntu:18.04").
+    Specify an existing Docker Image as a basic Docker Image (default: "ubuntu:18.04").
 
 NEW_IMAGE_REPOSITORY:NEW_IMAGE_TAG
-    New Docker Image (default: "BASIC_IMAGE_REPOSITORY-dk:BASIC_IMAGE_TAG").
+    Set the name of the new Docker Image (default: "BASIC_IMAGE_REPOSITORY-dk:BASIC_IMAGE_TAG").
 
 EOF
 }
