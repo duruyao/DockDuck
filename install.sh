@@ -12,7 +12,7 @@ Usage: $0 [-h|--help] [--prefix PREFIX]
     Display this help message.
 
 --prefix PREFIX
-    Specify an installation directory (default: /usr/local/bin).
+    Specify an installation directory (default: "/usr/local/bin").
 
 EOF
 }
