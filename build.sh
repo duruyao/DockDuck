@@ -23,7 +23,7 @@ EOF
 basic_image="ubuntu:18.04"
 basic_image_repository="ubuntu"
 basic_image_tag="18.04"
-new_image="ubuntu-dk:18.04"
+new_image=""
 
 ## parse arguments
 while (($#)); do
@@ -50,7 +50,6 @@ while (($#)); do
         show_usage >&2
         exit 1
       fi
-      new_image="${basic_image_repository}-dk:${basic_image_tag}"
       sed -i "s/FROM .*/FROM ${basic_image}/g" "${PWD}"/Dockerfile
       shift 2
     fi
@@ -68,6 +67,9 @@ while (($#)); do
     ;;
   esac
 done
+if [ -z "${new_image}" ]; then
+  new_image="${basic_image_repository}-dk:${basic_image_tag}"
+fi
 
 set -x
 
