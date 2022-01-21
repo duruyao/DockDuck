@@ -6,16 +6,16 @@
 
 function show_usage() {
   cat <<EOF
-Usage: $0 [-h|--help] [--basic-image BASIC_IMAGE_REPOSITORY:TAG] [NEW_IMAGE]
+Usage: $0 [-h|--help] [--basic-image BASIC_IMAGE_REPOSITORY:BASIC_IMAGE_TAG] [NEW_IMAGE_REPOSITORY:NEW_IMAGE_TAG]
 
 -h, --help
     Display this help message.
 
---basic-image BASIC_IMAGE_REPOSITORY:TAG
-    An existing Docker Image as basic image (default: ubuntu:18.04).
+--basic-image BASIC_IMAGE_REPOSITORY:BASIC_IMAGE_TAG
+    An existing Docker Image as basic image (default: "ubuntu:18.04").
 
-NEW_IMAGE
-    New Docker Image name (default: BASIC_IMAGE_REPOSITORY-dk:TAG).
+NEW_IMAGE_REPOSITORY:NEW_IMAGE_TAG
+    New Docker Image (default: "BASIC_IMAGE_REPOSITORY-dk:BASIC_IMAGE_TAG").
 
 EOF
 }
