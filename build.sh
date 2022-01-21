@@ -2,28 +2,28 @@
 
 ## date:   2022-01-20
 ## author: duruao@gmail.com
-## desc:   build new Docker Image base on an existing Docker Image
+## desc:   build new image with development kit layer from an existing image
 
 function show_usage() {
   cat <<EOF
-Usage: $0 [-h|--help] [--basic-image BASIC_IMAGE_REPOSITORY:BASIC_IMAGE_TAG] [NEW_IMAGE_REPOSITORY:NEW_IMAGE_TAG]
+Usage: $0 [-h|--help] [--basic-image BASIC_IMAGE:TAG] [NEW_IMAGE:TAG]
 
 -h, --help
     Display this help message.
 
---basic-image BASIC_IMAGE_REPOSITORY:BASIC_IMAGE_TAG
-    Specify an existing Docker Image as a basic Docker Image (default: "ubuntu:18.04").
+--basic-image BASIC_IMAGE:TAG
+    Specify an existing image as a basic image (default: "ubuntu:18.04").
 
-NEW_IMAGE_REPOSITORY:NEW_IMAGE_TAG
-    Set the name of the new Docker Image (default: "BASIC_IMAGE_REPOSITORY-dk:BASIC_IMAGE_TAG").
+NEW_IMAGE:TAG
+    Assign a name to the image (default: "BASIC_IMAGE-dk:TAG").
 
 EOF
 }
 
-basic_image="ubuntu:18.04"
-basic_image_repository="ubuntu"
-basic_image_tag="18.04"
-new_image=""
+basic_image_with_tag="ubuntu:18.04"
+basic_image="ubuntu"
+basic_tag="18.04"
+new_image_with_tag=""
 
 ## parse arguments
 while (($#)); do
@@ -39,18 +39,18 @@ while (($#)); do
       show_usage >&2
       exit 1
     else
-      basic_image="$2"
+      basic_image_with_tag="$2"
       # shellcheck disable=SC2001
-      basic_image_repository="$(echo "${basic_image}" | sed "s/\:.*//")"
+      basic_image="$(echo "${basic_image_with_tag}" | sed "s/\:.*//")"
       # shellcheck disable=SC2001
-      basic_image_tag="$(echo "${basic_image}" | sed "s/.*\://")"
+      basic_tag="$(echo "${basic_image_with_tag}" | sed "s/.*\://")"
       # shellcheck disable=SC2143
-      if [ -z "$(docker images | grep "${basic_image_repository} .*${basic_image_tag}")" ]; then
+      if [ -z "$(docker images | grep "${basic_image} .*${basic_tag}")" ]; then
         printf "\033[1;32;31m%s\033[m\n" "Error: No such Docker Image: $2" >&2
         show_usage >&2
         exit 1
       fi
-      sed -i "s/FROM .*/FROM ${basic_image}/g" "${PWD}"/Dockerfile
+      sed -i "s/FROM .*/FROM ${basic_image_with_tag}/g" "${PWD}"/Dockerfile
       shift 2
     fi
     ;;
@@ -62,15 +62,15 @@ while (($#)); do
     ;;
 
   *)
-    new_image="$1"
+    new_image_with_tag="$1"
     shift 1
     ;;
   esac
 done
-if [ -z "${new_image}" ]; then
-  new_image="${basic_image_repository}-dk:${basic_image_tag}"
+if [ -z "${new_image_with_tag}" ]; then
+  new_image_with_tag="${basic_image}-dk:${basic_tag}"
 fi
 
 set -x
 
-docker build -t "${new_image}" -f "${PWD}"/Dockerfile "${PWD}"
+docker build -t "${new_image_with_tag}" -f "${PWD}"/Dockerfile "${PWD}"
