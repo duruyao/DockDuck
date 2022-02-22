@@ -2,7 +2,7 @@
 
 ## date:   2022-01-20
 ## author: duruao@gmail.com
-## desc:   install tools of DockerDK
+## desc:   install applications of DockerDK
 
 function show_usage() {
   cat <<EOF
@@ -54,4 +54,4 @@ set -x
 
 chmod +x "${PWD}"/tools/*
 
-cp "${PWD}"/tools/* "${prefix}"/
+cp "${PWD}"/apps/* "${prefix}"/
