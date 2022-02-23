@@ -4,6 +4,8 @@
 ## author: duruao@gmail.com
 ## desc:   install applications of DockerDK
 
+set -euo pipefail
+
 function errorln() {
   printf "\033[1;32;31m%s\n\033[m" "${1}"
 }

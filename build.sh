@@ -4,6 +4,8 @@
 ## author: duruao@gmail.com
 ## desc:   build new image with development kit layer from an existing image
 
+set -euo pipefail
+
 function errorln() {
   printf "\033[1;32;31m%s\n\033[m" "${1}"
 }
