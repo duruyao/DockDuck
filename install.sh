@@ -4,6 +4,10 @@
 ## author: duruao@gmail.com
 ## desc:   install applications of DockerDK
 
+function errorln() {
+  printf "\033[1;32;31m%s\n\033[m" "${1}"
+}
+
 function show_usage() {
   cat <<EOF
 Usage: $0 [-h|--help] [--prefix PREFIX]
@@ -29,11 +33,11 @@ while (($#)); do
 
   --prefix)
     if [ -z "$2" ]; then
-      printf "\033[1;32;31m%s\033[m\n" "Error: $1 requires a non empty argument" >&2
+      errorln "Error: $1 requires a non empty argument" >&2
       show_usage >&2
       exit 1
     elif [ ! -d "$2" ]; then
-      printf "\033[1;32;31m%s\033[m\n" "Error: No such directory: $2" >&2
+      errorln "Error: No such directory: $2" >&2
       show_usage >&2
       exit 1
     else
@@ -43,7 +47,7 @@ while (($#)); do
     ;;
 
   --* | -* | *)
-    printf "\033[1;32;31m%s\033[m\n" "Error: Unknown flag: $1" >&2
+    errorln "Error: Unknown flag: $1" >&2
     show_usage >&2
     exit 1
     ;;

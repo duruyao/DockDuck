@@ -4,6 +4,10 @@
 ## author: duruao@gmail.com
 ## desc:   build new image with development kit layer from an existing image
 
+function errorln() {
+  printf "\033[1;32;31m%s\n\033[m" "${1}"
+}
+
 function show_usage() {
   cat <<EOF
 Usage: $0 [-h|--help] [--basic-image BASIC_IMAGE:TAG] [NEW_IMAGE:TAG]
@@ -35,7 +39,7 @@ while (($#)); do
 
   --basic-image)
     if [ -z "$2" ]; then
-      printf "\033[1;32;31m%s\033[m\n" "Error: $1 requires a non empty argument" >&2
+      errorln "Error: $1 requires a non empty argument" >&2
       show_usage >&2
       exit 1
     else
@@ -46,17 +50,16 @@ while (($#)); do
       basic_tag="$(echo "${basic_image_with_tag}" | sed "s/.*\://")"
       # shellcheck disable=SC2143
       if [ -z "$(docker images | grep "${basic_image} .*${basic_tag}")" ]; then
-        printf "\033[1;32;31m%s\033[m\n" "Error: No such Docker Image: $2" >&2
+        errorln "Error: No such Docker Image: $2" >&2
         show_usage >&2
         exit 1
       fi
-      sed -i "s/FROM .*/FROM ${basic_image_with_tag}/g" "${PWD}"/Dockerfile
       shift 2
     fi
     ;;
 
   --* | -*)
-    printf "\033[1;32;31m%s\033[m\n" "Error: Unknown flag: $1" >&2
+    errorln "Error: Unknown flag: $1" >&2
     show_usage >&2
     exit 1
     ;;
@@ -70,6 +73,9 @@ done
 if [ -z "${new_image_with_tag}" ]; then
   new_image_with_tag="${basic_image}-dk:${basic_tag}"
 fi
+
+## change Dockerfile
+sed -i "s/FROM .*/FROM ${basic_image_with_tag}/g" "${PWD}"/Dockerfile
 
 set -x
 
