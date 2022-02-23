@@ -2,6 +2,6 @@ FROM ubuntu:18.04
 
 EXPOSE 22 1234
 
-COPY todo/ /todo/
+COPY install/ /install/
 
-RUN bash /todo/000-todo-all.sh
+RUN bash /install/000-install.sh
