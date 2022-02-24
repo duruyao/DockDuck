@@ -2,7 +2,7 @@
 
 ## date:   2022-01-20
 ## author: duruao@gmail.com
-## desc:   build new image with development kit layer from an existing image
+## desc:   build a new dock-duck image with one more development kit layer than the base image
 
 set -euo pipefail
 
@@ -12,24 +12,21 @@ function errorln() {
 
 function show_usage() {
   cat <<EOF
-Usage: $0 [-h|--help] [--basic-image BASIC_IMAGE:TAG] [NEW_IMAGE:TAG]
+Usage: $0 [OPTIONS] IMAGE
 
--h, --help
-    Display this help message.
+Build a new dock-duck image with one more development kit layer than the base image
 
---basic-image BASIC_IMAGE:TAG
-    Specify an existing image as a basic image (default: "ubuntu:18.04").
+Options:
+  -h, --help                    Display this help message
+      --name                    Assign a name to the new image (default: "IMAGE-dk:TAG")
 
-NEW_IMAGE:TAG
-    Assign a name to the image (default: "BASIC_IMAGE-dk:TAG").
+See more about DockDucK at https://github.com/duruyao/DockDucK
 
 EOF
 }
 
-basic_image_with_tag="ubuntu:18.04"
-basic_image="ubuntu"
-basic_tag="18.04"
-new_image_with_tag=""
+image=""
+name=""
 
 ## parse arguments
 while (($#)); do
@@ -39,25 +36,9 @@ while (($#)); do
     exit 0
     ;;
 
-  --basic-image)
-    if [ -z "$2" ]; then
-      errorln "Error: $1 requires a non empty argument" >&2
-      show_usage >&2
-      exit 1
-    else
-      basic_image_with_tag="$2"
-      # shellcheck disable=SC2001
-      basic_image="$(echo "${basic_image_with_tag}" | sed "s/\:.*//")"
-      # shellcheck disable=SC2001
-      basic_tag="$(echo "${basic_image_with_tag}" | sed "s/.*\://")"
-      # shellcheck disable=SC2143
-      if [ -z "$(docker images | grep "${basic_image} .*${basic_tag}")" ]; then
-        errorln "Error: No such Docker Image: $2" >&2
-        show_usage >&2
-        exit 1
-      fi
-      shift 2
-    fi
+  --name)
+    name="$2"
+    shift 2
     ;;
 
   --* | -*)
@@ -67,18 +48,33 @@ while (($#)); do
     ;;
 
   *)
-    new_image_with_tag="$1"
+    # shellcheck disable=SC2001
+    repo="$(echo "$1" | sed "s/\:.*//")"
+    # shellcheck disable=SC2001
+    tag="$(echo "$1" | sed "s/.*\://")"
+    # shellcheck disable=SC2143
+    if [ -z "$(docker images | grep "${repo} .*${tag}")" ]; then
+      errorln "Error: No such docker image: $1" >&2
+      show_usage >&2
+      exit 1
+    fi
+    image="$1"
+    if [ -z "${name}" ]; then
+      name="${repo}-dk:${tag}"
+    fi
     shift 1
     ;;
   esac
 done
-if [ -z "${new_image_with_tag}" ]; then
-  new_image_with_tag="${basic_image}-dk:${basic_tag}"
+
+if [ -z "${image}" ]; then
+  errorln "Error: Missing IMAGE" >&2
+  show_usage >&2
+  exit 1
 fi
 
 ## change Dockerfile
-sed -i "s/FROM .*/FROM ${basic_image_with_tag}/g" "${PWD}"/Dockerfile
+sed -i "s/FROM .*/FROM ${image}/g" "${PWD}"/Dockerfile
 
 set -x
-
-docker build -t "${new_image_with_tag}" -f "${PWD}"/Dockerfile "${PWD}"
+docker build -t "${name}" -f "${PWD}"/Dockerfile "${PWD}"
