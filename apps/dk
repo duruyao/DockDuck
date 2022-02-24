@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+## date:   2022-02-22
+## author: duruao@gmail.com
+## desc:   the application dock-duck entry
+
+set -euo pipefail
+
+function errorln() {
+  printf "\033[1;32;31m%s\n\033[m" "${1}"
+}
+
+function show_version() {
+  cat <<EOF
+DockDucK v2022.02.22
+EOF
+}
+
+function show_usage() {
+  cat <<EOF
+
+Usage: $0 [OPTIONS] [COMMAND]
+
+A shortcut for using dock-duck containers
+
+Options:
+  -h, --help                    Display this help message
+  -v, --version                 Print version information and quit
+
+Commands:
+  attach                        Attach to a running dock-duck container
+  detach                        Launch a new dock-duck container in the background
+  ps                            List running dock-duck containers
+  run                           Run a command in a new dock-duck container
+  stop                          Stop one or more running containers
+
+Run 'dk COMMAND --help' for more information on a command
+
+See more about DockDucK at https://github.com/duruyao/DockDucK
+
+EOF
+}
+
+if [ 0 == $# ]; then
+  show_usage
+  exit 0
+fi
+
+## parse arguments
+while (($#)); do
+  case "$1" in
+  -h | --help)
+    show_usage
+    exit 0
+    ;;
+
+  -v | --version)
+    show_version
+    exit 0
+    ;;
+
+  attach)
+    shift 1
+    bash /home/duruyao/project/DockDuck/apps/dk-attach "$@"
+    exit 0
+    ;;
+
+  detach)
+    shift 1
+    bash /home/duruyao/project/DockDuck/apps/dk-detach "$@"
+    exit 0
+    ;;
+
+  ps)
+    shift 1
+    bash /home/duruyao/project/DockDuck/apps/dk-ps "$@"
+    exit 0
+    ;;
+
+  run)
+    shift 1
+    bash /home/duruyao/project/DockDuck/apps/dk-run "$@"
+    exit 0
+    ;;
+
+  stop)
+    shift 1
+    bash /home/duruyao/project/DockDuck/apps/dk-stop "$@"
+    exit 0
+    ;;
+
+  --* | -* | *)
+    errorln "Error: Unknown flag: $1" >&2
+    show_usage >&2
+    exit 1
+    ;;
+  esac
+done
