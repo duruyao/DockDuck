@@ -18,7 +18,6 @@ EOF
 
 function show_usage() {
   cat <<EOF
-
 Usage: $0 [OPTIONS] [COMMAND]
 
 A shortcut for using dock-duck containers
