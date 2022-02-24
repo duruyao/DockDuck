@@ -2,7 +2,7 @@
 
 ## date:   2022-01-20
 ## author: duruao@gmail.com
-## desc:   install applications of DockerDK
+## desc:   install dock-duck to the specified directory
 
 set -euo pipefail
 
@@ -12,18 +12,22 @@ function errorln() {
 
 function show_usage() {
   cat <<EOF
-Usage: $0 [-h|--help] [--prefix PREFIX]
+Usage: $0 [OPTIONS]
 
--h, --help
-    Display this help message.
+Install dock-duck to the specified directory
 
---prefix PREFIX
-    Specify an installation directory (default: "/usr/local/bin").
+Options:
+  -h, --help                    Display this help message
+      --prefix STRING           Specify an installation directory (default: "${HOME}/.dock-duck/bin")
+
+See more about DockDucK at https://github.com/duruyao/DockDucK
 
 EOF
 }
 
-prefix="/usr/local/bin"
+dk_home="${HOME}/.dock-duck"
+prefix="${dk_home}/bin"
+mkdir -p "${prefix}"
 
 ## parse arguments
 while (($#)); do
@@ -42,10 +46,9 @@ while (($#)); do
       errorln "Error: No such directory: $2" >&2
       show_usage >&2
       exit 1
-    else
-      prefix="$2"
-      shift 2
     fi
+    prefix="$2"
+    shift 2
     ;;
 
   --* | -* | *)
@@ -56,8 +59,21 @@ while (($#)); do
   esac
 done
 
-set -x
+echo "Installing ..."
+echo
 
-chmod +x "${PWD}"/tools/*
-
+chmod +x "${PWD}"/apps/*
 cp "${PWD}"/apps/* "${prefix}"/
+
+line="export PATH=\"${prefix}:\$PATH\""
+if ! grep -Fxq "${line}" "${HOME}"/.bashrc; then
+  echo "${line}" >>"${HOME}"/.bashrc
+fi
+source "${HOME}"/.bashrc
+
+echo "Install dock-duck to ${prefix}"
+if [ -n "$(command -v tree)" ]; then
+  tree "${prefix}"
+else
+  ls "${prefix}"
+fi
