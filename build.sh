@@ -54,8 +54,8 @@ while (($#)); do
     ;;
 
   *)
-    repo="${1//\:.*//}"
-    tag="${1//.*\://}"
+    repo="${1//\:*/}"
+    tag="${1//*\:/}"
     if ! echo "$1" | grep -q ":"; then
       tag="latest"
     fi
