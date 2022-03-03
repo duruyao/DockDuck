@@ -54,12 +54,12 @@ while (($#)); do
     ;;
 
   *)
-    # shellcheck disable=SC2001
-    repo="$(echo "$1" | sed "s/\:.*//")"
-    # shellcheck disable=SC2001
-    tag="$(echo "$1" | sed "s/.*\://")"
-    # shellcheck disable=SC2143
-    if [ -z "$(docker images | grep "${repo} .*${tag}")" ]; then
+    repo="${1//\:.*//}"
+    tag="${1//.*\://}"
+    if ! echo "$1" | grep -q ":"; then
+      tag="latest"
+    fi
+    if ! docker images | grep -q "${repo} .*${tag}"; then
       errorln "Error: No such docker image: $1" >&2
       show_usage >&2
       exit 1
