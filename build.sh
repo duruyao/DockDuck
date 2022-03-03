@@ -28,6 +28,12 @@ EOF
 image=""
 name=""
 
+if [ -z "$(command -v docker)" ]; then
+  errorln "Error: command 'docker' not found, try: sudo apt install <deb name>" >&2
+  show_usage >&2
+  exit 1
+fi
+
 ## parse arguments
 while (($#)); do
   case "$1" in
