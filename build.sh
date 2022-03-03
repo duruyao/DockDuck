@@ -29,7 +29,7 @@ image=""
 name=""
 
 if [ -z "$(command -v docker)" ]; then
-  errorln "Error: command 'docker' not found, try: sudo apt install <deb name>" >&2
+  errorln "Error: Command 'docker' not found, try: sudo apt install <deb name>" >&2
   show_usage >&2
   exit 1
 fi
