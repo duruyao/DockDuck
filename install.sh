@@ -64,6 +64,7 @@ echo
 
 chmod +x "${PWD}"/apps/*
 cp "${PWD}"/apps/* "${prefix}"/
+cp "${PWD}"/tools/* "${dk_home}"/
 
 line="export PATH=\"${prefix}:\$PATH\""
 if ! grep -Fxq "${line}" "${HOME}"/.bashrc; then
