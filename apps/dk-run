@@ -2,170 +2,216 @@
 
 ## date:   2022-01-21
 ## author: duruao@gmail.com
-## desc:   launch docker image which was added develop kit layer by DockerDK
+## desc:   launch docker image which was added develop kit layer by DockDuck
 
-DOCKER_BINARY=("nvidia-docker")
-DOCKER_NAME=("")
-DOCKER_HOSTNAME=(" ")
-DOCKER_AUTO_REMOVE=("--rm")
-DOCKER_INTERACTIVE=("--interactive")
-DOCKER_TTY=("--tty")
-DOCKER_DETACH=("")
-DOCKER_VOLUME=(" ")
-DOCKER_WORKDIR=(" ")
-DOCKER_PUBLISH=(" ")
-DOCKER_ENV=(" ")
-DOCKER_LOGIN=(" ")
-DOCKER_FLAGS=(" ")
-DOCKER_IMAGE=("/bin/bash")
-DOCKER_COMMAND=(" ")
+set -euo pipefail
 
-DOCKER_CMD=(${DOCKER_BINARY[@]+"${DOCKER_BINARY[@]}"} run
-            ${DOCKER_NAME[@]+"${DOCKER_NAME[@]}"}
-            ${DOCKER_HOSTNAME[@]+"${DOCKER_HOSTNAME[@]}"}
-            ${DOCKER_AUTO_REMOVE[@]+"${DOCKER_AUTO_REMOVE[@]}"}
-            ${DOCKER_INTERACTIVE[@]+"${DOCKER_INTERACTIVE[@]}"}
-            ${DOCKER_TTY[@]+"${DOCKER_TTY[@]}"}
-            ${DOCKER_DETACH[@]+"${DOCKER_DETACH[@]}"}
-            ${DOCKER_VOLUME[@]+"${DOCKER_VOLUME[@]}"}
-            ${DOCKER_WORKDIR[@]+"${DOCKER_WORKDIR[@]}"}
-            ${DOCKER_PUBLISH[@]+"${DOCKER_PUBLISH[@]}"}
-            ${DOCKER_ENV[@]+"${DOCKER_ENV[@]}"}
-            ${DOCKER_LOGIN[@]+"${DOCKER_LOGIN[@]}"}
-            ${DOCKER_FLAGS[@]+"${DOCKER_FLAGS[@]}"}
-            ${DOCKER_IMAGE[@]+"${DOCKER_IMAGE[@]}"}
-            ${DOCKER_COMMAND[@]+"${DOCKER_COMMAND[@]}"})
+function errorln() {
+  printf "\033[1;32;31m%s\n\033[m" "${1}"
+}
 
 function show_usage() {
   cat <<EOF
-Usage: $0 [-h|--help] [--name CONTAINER_NAME] [-d|--detach]
-        [-v|--volume HOST_DIR:CONTAINER_DIR] [-p|--publish HOST_PORT:CONTAINER_PORT]
-        [--docker-flags FLAGS] <DOCKER_DK_IMAGE:TAG> [COMMAND]
+Usage: dk run [OPTIONS] IMAGE -- [COMMAND]
 
--h, --help
-    Display this help message.
+Run a command in a new dock-duck container
 
--n, --name CONTAINER_NAME
-    Assign name to the container (default: "$USER.DOCKER_DK_IMAGE.TAG").
+Options:
+  -d, --detach                  Run Container in background and print container ID
+      --dry-run                 Print the docker command to be run, but do not execute it
+  -h, --help                    Display this help message
+      --name STRING             Assign name to the container (default: "$USER.IMAGE.TAG")
+      --other-flags LIST        Append other flags to the command 'docker run ...'
+  -p, --publish LIST            Publish a container's port(s) to the host (default: ALL_EXPOSED_PORTS:RANDOM_PORTS)
+  -v, --volume LIST             Bind mount a volume (default: "$PWD:$PWD")
 
--d, --detach
-    Run Container in background and print container ID.
-
--v, --volume HOST_DIR:CONTAINER_DIR
-    Bind mount a volume (default: "$PWD:$PWD").
-
--p, --publish HOST_PORT:CONTAINER_PORT
-    Publish a container's port(s) to the host (default: ALL_EXPOSED_PORTS:RANDOM_PORTS).
-
---docker-run-flags FLAGS
-    Append some flags to the command 'nvidia-docker run ...' or 'docker run ...'.
-
-DOCKER_DK_IMAGE:TAG
-    Specify an existing image which was added develop kit layer by DockerDK.
-
-COMMAND
-    Set the command to be run inside the container (default: "/bin/bash").
+See more about DockDucK at https://github.com/duruyao/DockDucK
 
 EOF
 }
 
-if [ -z "$(command -v "${DOCKER_BINARY[@]}")" ]; then
-  DOCKER_BINARY=("docker")
+dk_home="${HOME}"/.DockDuck
+dk_containers_file="${dk_home}"/containers.txt
+mkdir -p "${dk_home}"
+
+image=""
+name=""
+dry_run=false
+
+DOCKER_BINARY=("docker")
+DOCKER_NAME=()
+DOCKER_HOSTNAME=()
+DOCKER_AUTO_REMOVE=("--rm")
+DOCKER_INTERACTIVE=("--interactive")
+DOCKER_TTY=("--tty")
+DOCKER_DETACH=()
+DOCKER_MOUNT=("--volume ${PWD}:${PWD}")
+DOCKER_WORKDIR=("--workdir ${PWD}")
+DOCKER_PUBLISH=()
+DOCKER_ENV=()
+DOCKER_DEVICES=()
+DOCKER_FLAGS=()
+DOCKER_IMAGE=()
+DOCKER_COMMAND=("/bin/bash")
+DOCKER_LOGIN=("--login ${HOME}/.dock-duck/with-the-same-user")
+
+if [ -z "$(command -v docker)" ]; then
+  errorln "Error: Command 'docker' not found, try: sudo apt install <deb name>" >&2
+  show_usage >&2
+  exit 1
 fi
-DOCKER_NAME+=("--name ${container_name}")
-DOCKER_HOSTNAME+=("--hostname $(echo "${container_name}" | tr "[:lower:]" "[:upper:]")")
 
-DOCKER_IMAGE+=("${docker_dk_image}")
-
-container_list_path="${HOME}/.DockerDK/containers"
-mkdir -p "$(dirname "${container_list_path}")"
-
-container_name=""
-options=""
-command="/bin/bash"
-docker_dk_image=""
+if [ -n "$(command -v "nvidia-docker")" ]; then
+  DOCKER_BINARY=("nvidia-docker") # assign to DOCKER_BINARY
+fi
 
 ## parse arguments
 while (($#)); do
   case "$1" in
+  -d | --detach)
+    DOCKER_DETACH=("--detach") # assign to DOCKER_DETACH
+    shift 1
+    ;;
+
+  --dry-run)
+    dry_run=true
+    shift 1
+    ;;
+
   -h | --help)
     show_usage
     exit 0
     ;;
 
-  -n | --name)
+  --name)
     if [ -z "$2" ]; then
-      printf "\033[1;32;31m%s\033[m\n" "Error: $1 requires a non empty argument" >&2
+      errorln "Error: $1 requires a non empty argument" >&2
       show_usage >&2
       exit 1
     fi
-    container_name="$2"
+    # TODO: check if container exists
+    #
+    name="$2"
+    DOCKER_NAME=("--name ${name}") # assign to DOCKER_NAME
+    shift 2
+    ;;
+
+  --other-flags)
+    if [ -z "$2" ]; then
+      errorln "Error: $1 requires a non empty argument" >&2
+      show_usage >&2
+      exit 1
+    fi
+    DOCKER_FLAGS+=("$2") # assign to DOCKER_FLAGS
+    shift 2
+    ;;
+
+  -p | --publish)
+    if [ -z "$2" ]; then
+      errorln "Error: $1 requires a non empty argument" >&2
+      show_usage >&2
+      exit 1
+    fi
+    DOCKER_PUBLISH+=("--publish $2") # assign to DOCKER_PUBLISH
     shift 2
     ;;
 
   -v | --volume)
     if [ -z "$2" ]; then
-      printf "\033[1;32;31m%s\033[m\n" "Error: $1 requires a non empty argument" >&2
+      errorln "Error: $1 requires a non empty argument" >&2
       show_usage >&2
       exit 1
     fi
-    container_name="$2"
+    # TODO: check if directory is valid
+    #
+    DOCKER_MOUNT+=("--volume $2") # assign to DOCKER_MOUNT
     shift 2
     ;;
 
-  -c | --command)
-    if [ -z "$2" ]; then
-      printf "\033[1;32;31m%s\033[m\n" "Error: $1 requires a non empty argument" >&2
-      show_usage >&2
-      exit 1
-    fi
-    command="$2"
-    shift 2
+  --)
+    shift 1
+    DOCKER_COMMAND=("$@") # assign to DOCKER_COMMAND
+    break
     ;;
 
   --* | -*)
-    printf "\033[1;32;31m%s\033[m\n" "Error: Unknown flag: $1" >&2
+    errorln "Error: Unknown flag: $1" >&2
     show_usage >&2
     exit 1
     ;;
 
   *)
-    docker_dk_image="$1"
-    #shellcheck disable=SC2001
-    image_repository="$(echo "${docker_dk_image}" | sed "s/\:.*//")"
-    # shellcheck disable=SC2001
-    tag="$(echo "${docker_dk_image}" | sed "s/.*\://")"
-    # shellcheck disable=SC2143
-    if [ -z "$(docker images | grep "${image_repository} .*${tag}")" ]; then
-      printf "\033[1;32;31m%s\033[m\n" "Error: No such Docker Image: $2" >&2
-      show_usage >&2
-      exit 1
+    if [ -n "${image}" ]; then
+      DOCKER_COMMAND=("$@") # assign to DOCKER_COMMAND
+      break
+    else
+      repo="${1//\:*/}"
+      tag="${1//*\:/}"
+      if ! echo "$1" | grep -q ":"; then
+        tag="latest"
+      fi
+      if ! docker images | grep -q "${repo} .*${tag}"; then
+        errorln "Error: No such docker image: $1" >&2
+        show_usage >&2
+        exit 1
+      fi
+      image="${repo}:${tag}"
+      DOCKER_IMAGE=("${image}") # assign to DOCKER_IMAGE
+      if [ -z "${name}" ]; then
+        name="${USER}.${repo}.${tag}"
+        # TODO: check if container exists
+        #
+        # TODO: rename container to a valid name
+        #
+        DOCKER_NAME=("--name ${name}") # assign to DOCKER_NAME
+      fi
+      shift 1
     fi
-    #shellcheck disable=SC2001
-    image="$(echo "${image_repository}" | sed "s/.*\///")"
-    if [ -z "${container_name}" ]; then
-      container_name="${USER}.${image}-${tag}"
-    fi
-    shift 1
     ;;
   esac
 done
 
-
-
-
-if [ -z "${docker_dk_image}" ]; then
-  printf "\033[1;32;31m%s\033[m\n" "Error: Missing DOCKER_DK_IMAGE" >&2
+if [ -z "${image}" ]; then
+  errorln "Error: Missing IMAGE" >&2
   show_usage >&2
   exit 1
 fi
 
-exposed_ports=("$(docker inspect --format="{{.Config.ExposedPorts}}" "${docker_dk_image}" | sed "s/\([0-9].\)\/tcp\:{}/\1/g" | sed "s/map\[\([0-9]* [0-9]*\)\]/\1/g")")
-DOCKER_PUBLISH=()
-RANDOM="$(echo "${USER}" | md5sum | head -c 32)"
+DOCKER_HOSTNAME=("--hostname $(echo "${name}" | tr "[:upper:]" "[:lower:]")")
 
-while port in "${exposed_ports[@]}"; do
-  DOCKER_PUBLISH+=( --publish $((RANDOM % $((65535 - 1024 + 1)) + 1024)):"${port}" )
+DOCKER_ENV+=("--env BUILD_USER=$(id -u -n)")  # assign to DOCKER_ENV
+DOCKER_ENV+=("--env BUILD_UID=$(id -u)")      # assign to DOCKER_ENV
+DOCKER_ENV+=("--env BUILD_GROUP=$(id -g -n)") # assign to DOCKER_ENV
+DOCKER_ENV+=("--env BUILD_GID=$(id -g)")      # assign to DOCKER_ENV
+
+# shellcheck disable=SC2207
+exposed_ports=($(docker inspect --format="{{.Config.ExposedPorts}}" "${image}" | sed "s/\([0-9].\)\/tcp\:{}/\1/g" | sed "s/map\[\([0-9]* [0-9]*\)\]/\1/g"))
+seed="$(echo "${USER}" | md5sum | head -c 4)"
+for port in "${exposed_ports[@]}"; do
+  DOCKER_MOUNT+=("--publish $((seed + port)):${port}") # assign to DOCKER_MOUNT
 done
 
-echo "+ nvidia-docker run --workdir ${PWD} --rm --interactive --tty --name ${container_name} --volume ${PWD}:${PWD}${DOCKER_PUBLISH}${docker_dk_image} ${command}"
+DOCKER_CMD=(${DOCKER_BINARY[@]+"${DOCKER_BINARY[@]}"} run
+  ${DOCKER_NAME[@]+"${DOCKER_NAME[@]}"}
+  ${DOCKER_HOSTNAME[@]+"${DOCKER_HOSTNAME[@]}"}
+  ${DOCKER_AUTO_REMOVE[@]+"${DOCKER_AUTO_REMOVE[@]}"}
+  ${DOCKER_INTERACTIVE[@]+"${DOCKER_INTERACTIVE[@]}"}
+  ${DOCKER_TTY[@]+"${DOCKER_TTY[@]}"}
+  ${DOCKER_DETACH[@]+"${DOCKER_DETACH[@]}"}
+  ${DOCKER_MOUNT[@]+"${DOCKER_MOUNT[@]}"}
+  ${DOCKER_WORKDIR[@]+"${DOCKER_WORKDIR[@]}"}
+  ${DOCKER_PUBLISH[@]+"${DOCKER_PUBLISH[@]}"}
+  ${DOCKER_ENV[@]+"${DOCKER_ENV[@]}"}
+  ${DOCKER_DEVICES[@]+"${DOCKER_DEVICES[@]}"}
+  ${DOCKER_FLAGS[@]+"${DOCKER_FLAGS[@]}"}
+  ${DOCKER_IMAGE[@]+"${DOCKER_IMAGE[@]}"}
+  ${DOCKER_COMMAND[@]+"${DOCKER_COMMAND[@]}"}
+  ${DOCKER_LOGIN[@]+"${DOCKER_LOGIN[@]}"})
+
+if ${dry_run}; then
+  echo ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"}
+else
+  sed "1i ${name}" "${dk_containers_file}"
+  ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"}
+  sed -i "s/${name}//" "${dk_containers_file}"
+fi
