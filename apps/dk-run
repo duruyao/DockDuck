@@ -30,7 +30,7 @@ See more about DockDucK at https://github.com/duruyao/DockDucK
 EOF
 }
 
-dk_home="${HOME}"/.DockDuck
+dk_home="$(dirname "$(realpath "$0")")"
 dk_containers_file="${dk_home}"/containers.txt
 
 image=""
