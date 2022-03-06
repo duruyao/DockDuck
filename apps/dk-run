@@ -32,7 +32,6 @@ EOF
 
 dk_home="${HOME}"/.DockDuck
 dk_containers_file="${dk_home}"/containers.txt
-mkdir -p "${dk_home}"
 
 image=""
 name=""

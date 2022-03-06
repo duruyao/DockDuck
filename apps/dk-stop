@@ -31,13 +31,6 @@ EOF
 
 dk_home="${HOME}"/.DockDuck
 dk_containers_file="${dk_home}"/containers.txt
-mkdir -p "${dk_home}"
-
-if [ -z "$(command -v docker)" ]; then
-  errorln "Error: Command 'docker' not found, try: sudo apt install <deb name>" >&2
-  show_usage >&2
-  exit 1
-fi
 
 containers=()
 dry_run=false
