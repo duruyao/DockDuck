@@ -25,9 +25,7 @@ See more about DockDucK at https://github.com/duruyao/DockDucK
 EOF
 }
 
-dk_home="${HOME}/.dock-duck"
-prefix="${dk_home}"
-mkdir -p "${prefix}"
+prefix="${HOME}/.dock-duck"
 
 ## parse arguments
 while (($#)); do
@@ -62,9 +60,12 @@ done
 echo "Installing ..."
 echo
 
-chmod +x "${PWD}"/apps/*
-cp "${PWD}"/apps/* "${prefix}"/
-cp "${PWD}"/tools/* "${dk_home}"/
+chmod +x "${PWD}"/app/*
+chmod +x "${PWD}"/tools/*
+
+mkdir -p "${prefix}"/tools
+cp "${PWD}"/app/* "${prefix}"/
+cp "${PWD}"/tools/* "${prefix}"/tools/
 
 line="export PATH=\"${prefix}:\$PATH\""
 if ! grep -Fxq "${line}" "${HOME}"/.bashrc; then
