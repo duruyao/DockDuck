@@ -26,7 +26,7 @@ EOF
 }
 
 dk_home="${HOME}/.dock-duck"
-prefix="${dk_home}/bin"
+prefix="${dk_home}"
 mkdir -p "${prefix}"
 
 ## parse arguments
