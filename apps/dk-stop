@@ -2,7 +2,7 @@
 
 ## date:   2022-01-21
 ## author: duruao@gmail.com
-## desc:
+## desc:   stop one or more running containers
 
 set -euo pipefail
 
@@ -10,11 +10,15 @@ function errorln() {
   printf "\033[1;32;31m%s\n\033[m" "${1}"
 }
 
+function warningln() {
+  printf "\033[1;33m%s\n\033[m" "${1}"
+}
+
 function show_usage() {
   cat <<EOF
-Usage: dk stop [OPTIONS] CONTAINER
+Usage: dk stop [OPTIONS] CONTAINER [CONTAINER...]
 
-Attach to a running dock-duck container
+Stop one or more running containers
 
 Options:
       --dry-run                 Print the docker command to be run, but do not execute it
@@ -35,12 +39,11 @@ if [ -z "$(command -v docker)" ]; then
   exit 1
 fi
 
-name=""
-container=""
+containers=()
 dry_run=false
 
 DOCKER_BINARY=("docker")
-DOCKER_NAME=()
+DOCKER_NAMES=()
 
 ## parse arguments
 while (($#)); do
@@ -62,30 +65,34 @@ while (($#)); do
     ;;
 
   *)
-    container="$1"
-    # TODO: check if container is valid
-    #
-    # TODO: select name according to the container
-    #
-    name=""
-    DOCKER_NAME=("${name}")
+    # check if container is valid
+    if ! docker ps | grep -q "$1"; then
+      warningln "Warning: No such container: $1"
+    else
+      containers+=("$1")
+      # select name according to the container
+      name="$(docker ps | grep "$1" | sed "s/ .*//g")"
+      DOCKER_NAMES+=("${name}")
+    fi
     shift 1
     ;;
   esac
 done
 
-if [ -z "${container}" ]; then
+if [ 0 == ${#containers[@]} ]; then
   errorln "Error: Missing CONTAINER" >&2
   show_usage >&2
   exit 1
 fi
 
 DOCKER_CMD=(${DOCKER_BINARY[@]+"${DOCKER_BINARY[@]}"} stop
-  ${DOCKER_NAME[@]+"${DOCKER_NAME[@]}"})
+  ${DOCKER_NAMES[@]+"${DOCKER_NAMES[@]}"})
 
 if ${dry_run}; then
   echo ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"}
 else
-  ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"}
-  sed -i "s/${name}//" "${dk_containers_file}"
+  ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"} || exit
+  for name in "${DOCKER_NAMES[@]}"; do
+    sed -i "s/${name}//" "${dk_containers_file}"
+  done
 fi
