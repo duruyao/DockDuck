@@ -63,19 +63,32 @@ echo
 chmod +x "${PWD}"/app/*
 chmod +x "${PWD}"/tools/*
 
-mkdir -p "${prefix}"/tools
-cp "${PWD}"/app/* "${prefix}"/
-cp "${PWD}"/tools/* "${prefix}"/tools/
+dk_home="${prefix}"
+dk_data_home="${dk_home}/dk-data"
+dk_tools_home="${dk_home}/dk-tools"
 
-line="export PATH=\"${prefix}:\$PATH\""
+mkdir -p "${dk_home}"
+mkdir -p "${dk_data_home}"
+mkdir -p "${dk_tools_home}"
+
+cp "${PWD}"/app/* "${dk_home}"/
+cp "${PWD}"/tools/* "${dk_tools_home}"/
+
+line="export DK_HOME=\"${dk_home}\""
 if ! grep -Fxq "${line}" "${HOME}"/.bashrc; then
   echo "${line}" >>"${HOME}"/.bashrc
 fi
+
+line="export PATH=\"\$DK_HOME:\$PATH\""
+if ! grep -Fxq "${line}" "${HOME}"/.bashrc; then
+  echo "${line}" >>"${HOME}"/.bashrc
+fi
+
 source "${HOME}"/.bashrc
 
-echo "Install dock-duck to ${prefix}"
+echo "Install dock-duck to ${dk_home}"
 if [ -n "$(command -v tree)" ]; then
-  tree "${prefix}"
+  tree "${dk_home}"
 else
-  ls "${prefix}"
+  ls "${dk_home}"
 fi
