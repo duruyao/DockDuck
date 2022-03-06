@@ -41,8 +41,14 @@ EOF
 }
 
 dk_home="$(dirname "$(realpath "$0")")"
-dk_containers_file="${dk_home}"/containers.txt
+dk_data_home="${dk_home}/dk-data"
+dk_tools_home="${dk_home}/dk-tools"
+
 mkdir -p "${dk_home}"
+mkdir -p "${dk_data_home}"
+mkdir -p "${dk_tools_home}"
+
+dk_containers_file="${dk_data_home}"/containers.txt
 printf "" >>"${dk_containers_file}"
 
 if [ -z "$(command -v docker)" ]; then
@@ -71,31 +77,31 @@ while (($#)); do
 
   attach)
     shift 1
-    dk-attach "$@"
+    "${dk_tools_home}"/dk-attach "$@"
     exit 0
     ;;
 
   detach)
     shift 1
-    dk-detach "$@"
+    "${dk_tools_home}"/dk-detach "$@"
     exit 0
     ;;
 
   ps)
     shift 1
-    dk-ps "$@"
+    "${dk_tools_home}"/dk-ps "$@"
     exit 0
     ;;
 
   run)
     shift 1
-    dk-run "$@"
+    "${dk_tools_home}"/dk-run "$@"
     exit 0
     ;;
 
   stop)
     shift 1
-    dk-stop "$@"
+    "${dk_tools_home}"/dk-stop "$@"
     exit 0
     ;;
 
