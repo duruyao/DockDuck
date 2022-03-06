@@ -30,8 +30,10 @@ See more about DockDucK at https://github.com/duruyao/DockDucK
 EOF
 }
 
-dk_home="$(dirname "$(realpath "$0")")"
-dk_containers_file="${dk_home}"/containers.txt
+dk_home="$(dirname "$(dirname "$(realpath "$0")")")"
+dk_data_home="${dk_home}/dk-data"
+dk_tools_home="${dk_home}/dk-tools"
+dk_containers_file="${dk_data_home}"/containers.txt
 
 image=""
 name=""
@@ -52,7 +54,7 @@ DOCKER_DEVICES=()
 DOCKER_FLAGS=()
 DOCKER_IMAGE=()
 DOCKER_COMMAND=("/bin/bash")
-DOCKER_LOGIN=("--login ${HOME}/.dock-duck/with-the-same-user")
+DOCKER_LOGIN=("--login ${dk_tools_home}/with-the-same-user")
 
 if [ -z "$(command -v docker)" ]; then
   errorln "Error: Command 'docker' not found, try: sudo apt install <deb name>" >&2

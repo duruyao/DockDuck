@@ -24,8 +24,9 @@ See more about DockDucK at https://github.com/duruyao/DockDucK
 EOF
 }
 
-dk_home="$(dirname "$(realpath "$0")")"
-dk_containers_file="${dk_home}"/containers.txt
+dk_home="$(dirname "$(dirname "$(realpath "$0")")")"
+dk_data_home="${dk_home}/dk-data"
+dk_containers_file="${dk_data_home}"/containers.txt
 
 ## parse arguments
 while (($#)); do
