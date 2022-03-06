@@ -93,6 +93,6 @@ if ${dry_run}; then
 else
   ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"} || exit
   for name in "${DOCKER_NAMES[@]}"; do
-    sed -i "s/${name}//" "${dk_containers_file}"
+    sed -i "/${name}/d" "${dk_containers_file}"
   done
 fi

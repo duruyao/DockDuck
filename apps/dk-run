@@ -213,5 +213,5 @@ if ${dry_run}; then
 else
   sed "1i ${name}" "${dk_containers_file}"
   ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"}
-  sed -i "s/${name}//" "${dk_containers_file}"
+  sed -i "/${name}/d" "${dk_containers_file}"
 fi
