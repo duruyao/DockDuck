@@ -71,31 +71,31 @@ while (($#)); do
 
   attach)
     shift 1
-    bash /home/duruyao/project/DockDuck/apps/dk-attach "$@"
+    dk-attach "$@"
     exit 0
     ;;
 
   detach)
     shift 1
-    bash /home/duruyao/project/DockDuck/apps/dk-detach "$@"
+    dk-detach "$@"
     exit 0
     ;;
 
   ps)
     shift 1
-    bash /home/duruyao/project/DockDuck/apps/dk-ps "$@"
+    dk-ps "$@"
     exit 0
     ;;
 
   run)
     shift 1
-    bash /home/duruyao/project/DockDuck/apps/dk-run "$@"
+    dk-run "$@"
     exit 0
     ;;
 
   stop)
     shift 1
-    bash /home/duruyao/project/DockDuck/apps/dk-stop "$@"
+    dk-stop "$@"
     exit 0
     ;;
 
