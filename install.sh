@@ -10,6 +10,10 @@ function errorln() {
   printf "\033[1;32;31m%s\n\033[m" "${1}"
 }
 
+function warningln() {
+  printf "\033[1;33m%s\n\033[m" "${1}"
+}
+
 function show_usage() {
   cat <<EOF
 Usage: $0 [OPTIONS]
@@ -57,15 +61,26 @@ while (($#)); do
   esac
 done
 
-echo "Installing ..."
-echo
-
 chmod +x "${PWD}"/app/*
 chmod +x "${PWD}"/tools/*
 
 dk_home="${prefix}"
 dk_data_home="${dk_home}/dk-data"
 dk_tools_home="${dk_home}/dk-tools"
+
+if [ -f "${dk_home}/dk" ] || [ -d "${dk_data_home}" ] || [ -d "${dk_tools_home}" ]; then
+  warningln "Warning: There may already be a dock-duck(version: $("${dk_home}"/dk -v)) in ${dk_home}"
+  # shellcheck disable=SC2162
+  read -p "Do you want to continue installing the current version? [Y/n] " install_dk
+  # shellcheck disable=SC2143
+  if [ -n "$(echo "${install_dk}" | grep -E "n|no|N|No|NO")" ]; then
+    exit
+  fi
+  echo ""
+fi
+
+echo "Installing ..."
+echo
 
 mkdir -p "${dk_home}"
 mkdir -p "${dk_data_home}"

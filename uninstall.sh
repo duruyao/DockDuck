@@ -2,12 +2,16 @@
 
 ## date:   2022-01-20
 ## author: duruao@gmail.com
-## desc:   uninstall dock-duck to the specified directory
+## desc:   uninstall dock-duck from $DK_HOME
 
 set -euo pipefail
 
 function errorln() {
   printf "\033[1;32;31m%s\n\033[m" "${1}"
+}
+
+function warningln() {
+  printf "\033[1;33m%s\n\033[m" "${1}"
 }
 
 function show_usage() {
@@ -43,14 +47,25 @@ done
 echo "Uninstalling ..."
 echo
 
+if [ -z "${DK_HOME}" ]; then
+  warningln "Warning: \$DK_HOME not found"
+  exit
+fi
+
 # shellcheck disable=SC2153
 dk_home="${DK_HOME}"
+dk_data_home="${dk_home}/dk-data"
+dk_tools_home="${dk_home}/dk-tools"
 
 rm -f "${dk_home}"/dk
-rm -rf "${dk_home}"/dk-tools
-rm -rf "${dk_home}"/dk-data
+rm -rf "${dk_data_home}"
+rm -rf "${dk_tools_home}"
 
-sed -i "/.*DK_HOME.*/d" "${HOME}"/.bashrc
+line="export DK_HOME=.*"
+sed -i "/${line}/d" "${HOME}"/.bashrc
+
+line="export PATH=\"\$DK_HOME:\$PATH\""
+sed -i "/${line}/d" "${HOME}"/.bashrc
 
 source "${HOME}"/.bashrc
 
