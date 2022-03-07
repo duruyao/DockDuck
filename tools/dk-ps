@@ -6,6 +6,10 @@
 
 set -euo pipefail
 
+dk_home="$(dirname "$(dirname "$(realpath "$0")")")"
+dk_data_home="${dk_home}/dk-data"
+dk_containers_file="${dk_data_home}"/containers.txt
+
 function errorln() {
   printf "\033[1;32;31m%s\n\033[m" "${1}"
 }
@@ -23,10 +27,6 @@ See more about DockDucK at https://github.com/duruyao/DockDucK
 
 EOF
 }
-
-dk_home="$(dirname "$(dirname "$(realpath "$0")")")"
-dk_data_home="${dk_home}/dk-data"
-dk_containers_file="${dk_data_home}"/containers.txt
 
 ## parse arguments
 while (($#)); do
