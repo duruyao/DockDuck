@@ -2,7 +2,7 @@
 
 ## date:   2022-01-21
 ## author: duruao@gmail.com
-## desc:
+## desc:   attach to a running dock-duck container
 
 set -euo pipefail
 
@@ -35,3 +35,68 @@ See more about DockDucK at https://github.com/duruyao/DockDucK
 
 EOF
 }
+
+dry_run=false
+
+DOCKER_BINARY=("docker")
+DOCKER_INTERACTIVE=("--interactive")
+DOCKER_TTY=("--tty")
+DOCKER_USER=("--user ${USER}")
+DOCKER_CONTAINER=()
+DOCKER_COMMAND=("/bin/bash")
+
+## parse arguments
+while (($#)); do
+  case "$1" in
+  --dry-run)
+    dry_run=true
+    shift 1
+    ;;
+
+  -h | --help)
+    show_usage
+    exit 0
+    ;;
+
+  --* | -*)
+    errorln "Error: Unknown flag: $1" >&2
+    show_usage >&2
+    exit 1
+    ;;
+
+  *)
+    # check if container is valid
+    if ! docker ps | grep -q "$1"; then
+      warningln "Warning: No such container: $1"
+    else
+      # select name according to the container
+      name="$(docker ps | grep "$1" | sed "s/ .*//g")"
+      DOCKER_CONTAINER=("${name}")
+    fi
+    shift 1
+    ;;
+  esac
+done
+
+if [ 0 == ${#DOCKER_CONTAINER[@]} ]; then
+  DOCKER_CONTAINER+=("${default_container}")
+fi
+
+if [ 0 == ${#DOCKER_CONTAINER[@]} ]; then
+  errorln "Error: Missing CONTAINER" >&2
+  show_usage >&2
+  exit 1
+fi
+
+DOCKER_CMD=(${DOCKER_BINARY[@]+"${DOCKER_BINARY[@]}"} exec
+  ${DOCKER_INTERACTIVE[@]+"${DOCKER_INTERACTIVE[@]}"}
+  ${DOCKER_TTY[@]+"${DOCKER_TTY[@]}"}
+  ${DOCKER_USER[@]+"${DOCKER_USER[@]}"}
+  ${DOCKER_CONTAINER[@]+"${DOCKER_CONTAINER[@]}"}
+  ${DOCKER_COMMAND[@]+"${DOCKER_COMMAND[@]}"})
+
+if ${dry_run}; then
+  echo ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"}
+else
+  ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"} || exit
+fi
