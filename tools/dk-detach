@@ -2,12 +2,13 @@
 
 ## date:   2022-01-21
 ## author: duruao@gmail.com
-## desc:
+## desc:   launch a new dock-duck container in the background
 
 set -euo pipefail
 
 dk_home="$(dirname "$(dirname "$(realpath "$0")")")"
 dk_data_home="${dk_home}/dk-data"
+dk_tools_home="${dk_home}/dk-tools"
 dk_containers_file="${dk_data_home}"/containers.txt
 
 function errorln() {
@@ -18,10 +19,11 @@ function show_usage() {
   cat <<EOF
 Usage: dk detach [OPTIONS] IMAGE
 
-Run a command in a new dock-duck container
+Launch a new dock-duck container in the background
 
 Options:
       --dry-run                 Print the docker command to be run, but do not execute it
+      --gpus GPU-REQUEST        GPU devices to add to the container ('all' to pass all GPUs)
   -h, --help                    Display this help message
       --name STRING             Assign name to the container (default: "$USER.IMAGE.TAG")
       --other-flags LIST        Append other flags to the command 'docker run ...'
@@ -32,3 +34,176 @@ See more about DockDucK at https://github.com/duruyao/DockDucK
 
 EOF
 }
+
+image=""
+name=""
+dry_run=false
+
+DOCKER_BINARY=("docker")
+DOCKER_NAME=()
+DOCKER_HOSTNAME=()
+DOCKER_GPUS=()
+DOCKER_AUTO_REMOVE=("--rm")
+DOCKER_INTERACTIVE=("--interactive")
+DOCKER_TTY=("--tty")
+DOCKER_DETACH=("--detach")
+DOCKER_VOLUME=("--volume ${PWD}:${PWD}")
+DOCKER_WORKDIR=("--workdir ${PWD}")
+DOCKER_PUBLISH=()
+DOCKER_ENV=()
+DOCKER_DEVICES=()
+DOCKER_FLAGS=()
+DOCKER_IMAGE=()
+DOCKER_COMMAND=("sshd -D")
+DOCKER_LOGIN=("--login ${dk_tools_home}/with-the-same-user")
+
+## parse arguments
+while (($#)); do
+  case "$1" in
+  --dry-run)
+    dry_run=true
+    shift 1
+    ;;
+
+  --gpus)
+    if [ -z "$2" ]; then
+      errorln "Error: $1 requires a non empty argument" >&2
+      show_usage >&2
+      exit 1
+    fi
+    # check if nvidia-docker exists
+    if [ -z "$(command -v nvidia-docker)" ]; then
+      errorln "Error: Command 'nvidia-docker' not found, see https://github.com/NVIDIA/nvidia-docker" >&2
+      show_usage >&2
+      exit 1
+    fi
+    DOCKER_GPUS=("--gpus $2") # assign to DOCKER_NAME
+    shift 2
+    ;;
+
+  -h | --help)
+    show_usage
+    exit 0
+    ;;
+
+  --name)
+    if [ -z "$2" ]; then
+      errorln "Error: $1 requires a non empty argument" >&2
+      show_usage >&2
+      exit 1
+    fi
+    # TODO: check if container exists
+    #
+    name="$2"
+    DOCKER_NAME=("--name ${name}") # assign to DOCKER_NAME
+    shift 2
+    ;;
+
+  --other-flags)
+    if [ -z "$2" ]; then
+      errorln "Error: $1 requires a non empty argument" >&2
+      show_usage >&2
+      exit 1
+    fi
+    DOCKER_FLAGS+=("$2") # assign to DOCKER_FLAGS
+    shift 2
+    ;;
+
+  -p | --publish)
+    if [ -z "$2" ]; then
+      errorln "Error: $1 requires a non empty argument" >&2
+      show_usage >&2
+      exit 1
+    fi
+    DOCKER_PUBLISH+=("--publish $2") # assign to DOCKER_PUBLISH
+    shift 2
+    ;;
+
+  -v | --volume)
+    if [ -z "$2" ]; then
+      errorln "Error: $1 requires a non empty argument" >&2
+      show_usage >&2
+      exit 1
+    fi
+    # TODO: check if directory is valid
+    #
+    DOCKER_VOLUME+=("--volume $2") # assign to DOCKER_VOLUME
+    shift 2
+    ;;
+
+  --* | -*)
+    errorln "Error: Unknown flag: $1" >&2
+    show_usage >&2
+    exit 1
+    ;;
+
+  *)
+    repo="${1//\:*/}"
+    tag="${1//*\:/}"
+    if ! echo "$1" | grep -q ":"; then
+      tag="latest"
+    fi
+    if ! docker images | grep -q "${repo} .*${tag}"; then
+      errorln "Error: No such docker image: $1" >&2
+      show_usage >&2
+      exit 1
+    fi
+    image="${repo}:${tag}"
+    DOCKER_IMAGE=("${image}") # assign to DOCKER_IMAGE
+    if [ -z "${name}" ]; then
+      name="${USER}.${repo}.${tag}"
+      # TODO: check if container exists
+      #
+      # TODO: rename container to a valid name
+      #
+      DOCKER_NAME=("--name ${name}") # assign to DOCKER_NAME
+    fi
+    shift 1
+    ;;
+  esac
+done
+
+if [ -z "${image}" ]; then
+  errorln "Error: Missing IMAGE" >&2
+  show_usage >&2
+  exit 1
+fi
+
+DOCKER_HOSTNAME=("--hostname $(echo "${name}" | tr "[:upper:]" "[:lower:]")")
+
+DOCKER_ENV+=("--env BUILD_USER=$(id -u -n)")  # assign to DOCKER_ENV
+DOCKER_ENV+=("--env BUILD_UID=$(id -u)")      # assign to DOCKER_ENV
+DOCKER_ENV+=("--env BUILD_GROUP=$(id -g -n)") # assign to DOCKER_ENV
+DOCKER_ENV+=("--env BUILD_GID=$(id -g)")      # assign to DOCKER_ENV
+
+# shellcheck disable=SC2207
+exposed_ports=($(docker inspect --format="{{.Config.ExposedPorts}}" "${image}" | sed "s/\([0-9].\)\/tcp\:{}/\1/g" | sed "s/map\[\([0-9]* [0-9]*\)\]/\1/g"))
+seed="$(echo "${USER}" | md5sum | head -c 4)"
+for port in "${exposed_ports[@]}"; do
+  DOCKER_VOLUME+=("--publish $((seed + port)):${port}") # assign to DOCKER_VOLUME
+done
+
+DOCKER_CMD=(${DOCKER_BINARY[@]+"${DOCKER_BINARY[@]}"} run
+  ${DOCKER_NAME[@]+"${DOCKER_NAME[@]}"}
+  ${DOCKER_HOSTNAME[@]+"${DOCKER_HOSTNAME[@]}"}
+  ${DOCKER_GPUS[@]+"${DOCKER_GPUS[@]}"}
+  ${DOCKER_AUTO_REMOVE[@]+"${DOCKER_AUTO_REMOVE[@]}"}
+  ${DOCKER_INTERACTIVE[@]+"${DOCKER_INTERACTIVE[@]}"}
+  ${DOCKER_TTY[@]+"${DOCKER_TTY[@]}"}
+  ${DOCKER_DETACH[@]+"${DOCKER_DETACH[@]}"}
+  ${DOCKER_VOLUME[@]+"${DOCKER_VOLUME[@]}"}
+  ${DOCKER_WORKDIR[@]+"${DOCKER_WORKDIR[@]}"}
+  ${DOCKER_PUBLISH[@]+"${DOCKER_PUBLISH[@]}"}
+  ${DOCKER_ENV[@]+"${DOCKER_ENV[@]}"}
+  ${DOCKER_DEVICES[@]+"${DOCKER_DEVICES[@]}"}
+  ${DOCKER_FLAGS[@]+"${DOCKER_FLAGS[@]}"}
+  ${DOCKER_IMAGE[@]+"${DOCKER_IMAGE[@]}"}
+  ${DOCKER_COMMAND[@]+"${DOCKER_COMMAND[@]}"}
+  ${DOCKER_LOGIN[@]+"${DOCKER_LOGIN[@]}"})
+
+if ${dry_run}; then
+  echo ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"}
+else
+  sed "1i ${name}" "${dk_containers_file}"
+  ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"} || sed -i "/${name}/d" "${dk_containers_file}"
+fi
