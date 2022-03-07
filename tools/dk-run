@@ -19,6 +19,7 @@ Run a command in a new dock-duck container
 Options:
   -d, --detach                  Run Container in background and print container ID
       --dry-run                 Print the docker command to be run, but do not execute it
+      --gpus GPU-REQUEST        GPU devices to add to the container ('all' to pass all GPUs)
   -h, --help                    Display this help message
       --name STRING             Assign name to the container (default: "$USER.IMAGE.TAG")
       --other-flags LIST        Append other flags to the command 'docker run ...'
@@ -42,11 +43,12 @@ dry_run=false
 DOCKER_BINARY=("docker")
 DOCKER_NAME=()
 DOCKER_HOSTNAME=()
+DOCKER_GPUS=()
 DOCKER_AUTO_REMOVE=("--rm")
 DOCKER_INTERACTIVE=("--interactive")
 DOCKER_TTY=("--tty")
 DOCKER_DETACH=()
-DOCKER_MOUNT=("--volume ${PWD}:${PWD}")
+DOCKER_VOLUME=("--volume ${PWD}:${PWD}")
 DOCKER_WORKDIR=("--workdir ${PWD}")
 DOCKER_PUBLISH=()
 DOCKER_ENV=()
@@ -55,16 +57,6 @@ DOCKER_FLAGS=()
 DOCKER_IMAGE=()
 DOCKER_COMMAND=("/bin/bash")
 DOCKER_LOGIN=("--login ${dk_tools_home}/with-the-same-user")
-
-if [ -z "$(command -v docker)" ]; then
-  errorln "Error: Command 'docker' not found, try: sudo apt install <deb name>" >&2
-  show_usage >&2
-  exit 1
-fi
-
-if [ -n "$(command -v "nvidia-docker")" ]; then
-  DOCKER_BINARY=("nvidia-docker") # assign to DOCKER_BINARY
-fi
 
 ## parse arguments
 while (($#)); do
@@ -77,6 +69,22 @@ while (($#)); do
   --dry-run)
     dry_run=true
     shift 1
+    ;;
+
+  --gpus)
+    if [ -z "$2" ]; then
+      errorln "Error: $1 requires a non empty argument" >&2
+      show_usage >&2
+      exit 1
+    fi
+    # check if nvidia-docker exists
+    if [ -z "$(command -v nvidia-docker)" ]; then
+      errorln "Error: Command 'nvidia-docker' not found, see https://github.com/NVIDIA/nvidia-docker" >&2
+      show_usage >&2
+      exit 1
+    fi
+    DOCKER_GPUS=("--gpus $2") # assign to DOCKER_NAME
+    shift 2
     ;;
 
   -h | --help)
@@ -125,7 +133,7 @@ while (($#)); do
     fi
     # TODO: check if directory is valid
     #
-    DOCKER_MOUNT+=("--volume $2") # assign to DOCKER_MOUNT
+    DOCKER_VOLUME+=("--volume $2") # assign to DOCKER_VOLUME
     shift 2
     ;;
 
@@ -189,17 +197,18 @@ DOCKER_ENV+=("--env BUILD_GID=$(id -g)")      # assign to DOCKER_ENV
 exposed_ports=($(docker inspect --format="{{.Config.ExposedPorts}}" "${image}" | sed "s/\([0-9].\)\/tcp\:{}/\1/g" | sed "s/map\[\([0-9]* [0-9]*\)\]/\1/g"))
 seed="$(echo "${USER}" | md5sum | head -c 4)"
 for port in "${exposed_ports[@]}"; do
-  DOCKER_MOUNT+=("--publish $((seed + port)):${port}") # assign to DOCKER_MOUNT
+  DOCKER_VOLUME+=("--publish $((seed + port)):${port}") # assign to DOCKER_VOLUME
 done
 
 DOCKER_CMD=(${DOCKER_BINARY[@]+"${DOCKER_BINARY[@]}"} run
   ${DOCKER_NAME[@]+"${DOCKER_NAME[@]}"}
   ${DOCKER_HOSTNAME[@]+"${DOCKER_HOSTNAME[@]}"}
+  ${DOCKER_GPUS[@]+"${DOCKER_GPUS[@]}"}
   ${DOCKER_AUTO_REMOVE[@]+"${DOCKER_AUTO_REMOVE[@]}"}
   ${DOCKER_INTERACTIVE[@]+"${DOCKER_INTERACTIVE[@]}"}
   ${DOCKER_TTY[@]+"${DOCKER_TTY[@]}"}
   ${DOCKER_DETACH[@]+"${DOCKER_DETACH[@]}"}
-  ${DOCKER_MOUNT[@]+"${DOCKER_MOUNT[@]}"}
+  ${DOCKER_VOLUME[@]+"${DOCKER_VOLUME[@]}"}
   ${DOCKER_WORKDIR[@]+"${DOCKER_WORKDIR[@]}"}
   ${DOCKER_PUBLISH[@]+"${DOCKER_PUBLISH[@]}"}
   ${DOCKER_ENV[@]+"${DOCKER_ENV[@]}"}
