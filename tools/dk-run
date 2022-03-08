@@ -55,8 +55,8 @@ DOCKER_ENV=()
 DOCKER_DEVICES=()
 DOCKER_FLAGS=()
 DOCKER_IMAGE=()
-DOCKER_COMMAND=("/bin/bash")
 DOCKER_LOGIN=("--login ${dk_tools_home}/with-the-same-user")
+DOCKER_COMMAND=("bash")
 
 ## parse arguments
 while (($#)); do
@@ -214,9 +214,9 @@ DOCKER_CMD=(${DOCKER_BINARY[@]+"${DOCKER_BINARY[@]}"} run
   ${DOCKER_ENV[@]+"${DOCKER_ENV[@]}"}
   ${DOCKER_DEVICES[@]+"${DOCKER_DEVICES[@]}"}
   ${DOCKER_FLAGS[@]+"${DOCKER_FLAGS[@]}"}
-  ${DOCKER_IMAGE[@]+"${DOCKER_IMAGE[@]}"}
-  ${DOCKER_COMMAND[@]+"${DOCKER_COMMAND[@]}"}
-  ${DOCKER_LOGIN[@]+"${DOCKER_LOGIN[@]}"})
+  ${DOCKER_IMAGE[@]+"${DOCKER_IMAGE[@]}"} "bash"
+  ${DOCKER_LOGIN[@]+"${DOCKER_LOGIN[@]}"}
+  ${DOCKER_COMMAND[@]+"${DOCKER_COMMAND[@]}"})
 
 if ${dry_run}; then
   echo ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"}
