@@ -8,7 +8,6 @@ set -euo pipefail
 
 dk_home="$(dirname "$(dirname "$(realpath "$0")")")"
 dk_data_home="${dk_home}/dk-data"
-dk_tools_home="${dk_home}/dk-tools"
 dk_containers_file="${dk_data_home}"/containers.txt
 
 function errorln() {
@@ -55,7 +54,7 @@ DOCKER_ENV=()
 DOCKER_DEVICES=()
 DOCKER_FLAGS=()
 DOCKER_IMAGE=()
-DOCKER_LOGIN=("--login ${dk_tools_home}/with-the-same-user")
+DOCKER_LOGIN=("--login /duck/with-the-same-user")
 DOCKER_COMMAND=("bash")
 
 ## parse arguments
@@ -214,7 +213,7 @@ DOCKER_CMD=(${DOCKER_BINARY[@]+"${DOCKER_BINARY[@]}"} run
   ${DOCKER_ENV[@]+"${DOCKER_ENV[@]}"}
   ${DOCKER_DEVICES[@]+"${DOCKER_DEVICES[@]}"}
   ${DOCKER_FLAGS[@]+"${DOCKER_FLAGS[@]}"}
-  ${DOCKER_IMAGE[@]+"${DOCKER_IMAGE[@]}"} "bash"
+  ${DOCKER_IMAGE[@]+"${DOCKER_IMAGE[@]}"} bash
   ${DOCKER_LOGIN[@]+"${DOCKER_LOGIN[@]}"}
   ${DOCKER_COMMAND[@]+"${DOCKER_COMMAND[@]}"})
 
