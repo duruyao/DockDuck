@@ -1,1 +1,27 @@
 #!/usr/bin/env bash
+
+## date:   2022-03-08
+## author: duruao@gmail.com
+## desc:   login container with the same user of host
+
+set -euo pipefail
+
+COMMAND=("$@")
+
+## build user
+if [ -n "${BUILD_USER}" ] && [ -n "${BUILD_UID}" ] && [ -n "${BUILD_GROUP}" ] && [ -n "${BUILD_GID}" ]; then
+  useradd -ms /bin/bash "${BUILD_USER}"
+  usermod -aG sudo "${BUILD_USER}"
+  echo "${BUILD_USER}":"${BUILD_USER}" | chpasswd
+  usermod -u "${BUILD_UID}" "${BUILD_USER}"
+  groupmod -g "${BUILD_GID}" "${BUILD_GROUP}"
+
+  cp -r /install/.vim /home/"${BUILD_USER}"/.vim
+  cp /install/.vimrc /home/"${BUILD_USER}"/.vimrc
+  cp /install/.tmux.conf /home/"${BUILD_USER}"/.tmux.conf
+  cat /install/user.PS1 >>/home/"${BUILD_USER}"/.bashrc
+
+  chown -R "${BUILD_USER}":"${BUILD_GROUP}" /home/"${BUILD_USER}"/
+fi
+
+sudo -u "${BUILD_UID}" "${COMMAND[@]}"
