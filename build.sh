@@ -80,7 +80,8 @@ if [ -z "${image}" ]; then
 fi
 
 ## change Dockerfile
-sed -i "s/FROM .*/FROM ${image}/g" "${PWD}"/Dockerfile
+sed -i "/FROM .*/d" "${PWD}"/Dockerfile
+sed -i "1i FROM ${image}" "${PWD}"/Dockerfile
 
 set -x
 docker build -t "${name}" -f "${PWD}"/Dockerfile "${PWD}"
