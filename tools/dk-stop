@@ -91,13 +91,13 @@ if [ 0 == ${#containers[@]} ]; then
   exit 1
 fi
 
-DOCKER_CMD=(${DOCKER_BINARY[@]+"${DOCKER_BINARY[@]}"} stop
+DOCKER_CMD=(${DOCKER_BINARY[@]+"${DOCKER_BINARY[@]}"} "stop"
   ${DOCKER_NAMES[@]+"${DOCKER_NAMES[@]}"})
 
 if ${dry_run}; then
   echo ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"}
 else
-  ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"} || exit
+  ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"} || exit 1
   for name in "${DOCKER_NAMES[@]}"; do
     sed -i "/${name}/d" "${dk_containers_file}"
   done

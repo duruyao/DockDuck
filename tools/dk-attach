@@ -41,9 +41,9 @@ dry_run=false
 DOCKER_BINARY=("docker")
 DOCKER_INTERACTIVE=("--interactive")
 DOCKER_TTY=("--tty")
-DOCKER_USER=("--user ${USER}")
+DOCKER_USER=("--user" "${USER}")
 DOCKER_CONTAINER=()
-DOCKER_COMMAND=("/bin/bash")
+DOCKER_COMMAND=("bash")
 
 ## parse arguments
 while (($#)); do
@@ -88,7 +88,7 @@ if [ 0 == ${#DOCKER_CONTAINER[@]} ]; then
   exit 1
 fi
 
-DOCKER_CMD=(${DOCKER_BINARY[@]+"${DOCKER_BINARY[@]}"} exec
+DOCKER_CMD=(${DOCKER_BINARY[@]+"${DOCKER_BINARY[@]}"} "exec"
   ${DOCKER_INTERACTIVE[@]+"${DOCKER_INTERACTIVE[@]}"}
   ${DOCKER_TTY[@]+"${DOCKER_TTY[@]}"}
   ${DOCKER_USER[@]+"${DOCKER_USER[@]}"}

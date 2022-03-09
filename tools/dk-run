@@ -47,14 +47,14 @@ DOCKER_AUTO_REMOVE=("--rm")
 DOCKER_INTERACTIVE=("--interactive")
 DOCKER_TTY=("--tty")
 DOCKER_DETACH=()
-DOCKER_VOLUME=("--volume ${PWD}:${PWD}")
-DOCKER_WORKDIR=("--workdir ${PWD}")
+DOCKER_VOLUME=("--volume" "${PWD}:${PWD}")
+DOCKER_WORKDIR=("--workdir" "${PWD}")
 DOCKER_PUBLISH=()
 DOCKER_ENV=()
 DOCKER_DEVICES=()
 DOCKER_FLAGS=()
 DOCKER_IMAGE=()
-DOCKER_LOGIN=("--login /duck/with-the-same-user")
+DOCKER_LOGIN=("bash" "--login" "/duck/with-the-same-user")
 DOCKER_COMMAND=("bash")
 
 ## parse arguments
@@ -82,7 +82,7 @@ while (($#)); do
       show_usage >&2
       exit 1
     fi
-    DOCKER_GPUS=("--gpus $2") # assign to DOCKER_NAME
+    DOCKER_GPUS=("--gpus" "$2") # assign to DOCKER_NAME
     shift 2
     ;;
 
@@ -100,7 +100,7 @@ while (($#)); do
     # TODO: check if container exists
     #
     name="$2"
-    DOCKER_NAME=("--name ${name}") # assign to DOCKER_NAME
+    DOCKER_NAME=("--name" "${name}") # assign to DOCKER_NAME
     shift 2
     ;;
 
@@ -120,7 +120,7 @@ while (($#)); do
       show_usage >&2
       exit 1
     fi
-    DOCKER_PUBLISH+=("--publish $2") # assign to DOCKER_PUBLISH
+    DOCKER_PUBLISH+=("--publish" "$2") # assign to DOCKER_PUBLISH
     shift 2
     ;;
 
@@ -132,7 +132,7 @@ while (($#)); do
     fi
     # TODO: check if directory is valid
     #
-    DOCKER_VOLUME+=("--volume $2") # assign to DOCKER_VOLUME
+    DOCKER_VOLUME+=("--volume" "$2") # assign to DOCKER_VOLUME
     shift 2
     ;;
 
@@ -171,7 +171,7 @@ while (($#)); do
         #
         # TODO: rename container to a valid name
         #
-        DOCKER_NAME=("--name ${name}") # assign to DOCKER_NAME
+        DOCKER_NAME=("--name" "${name}") # assign to DOCKER_NAME
       fi
       shift 1
     fi
@@ -185,21 +185,24 @@ if [ -z "${image}" ]; then
   exit 1
 fi
 
-DOCKER_HOSTNAME=("--hostname $(echo "${name}" | tr "[:upper:]" "[:lower:]")")
+DOCKER_HOSTNAME=("--hostname" "$(echo "${name}" | tr "[:upper:]" "[:lower:]" | sed "s/${USER}*\.//" | sed "s/\./-/g")")
 
-DOCKER_ENV+=("--env BUILD_USER=$(id -u -n)")  # assign to DOCKER_ENV
-DOCKER_ENV+=("--env BUILD_UID=$(id -u)")      # assign to DOCKER_ENV
-DOCKER_ENV+=("--env BUILD_GROUP=$(id -g -n)") # assign to DOCKER_ENV
-DOCKER_ENV+=("--env BUILD_GID=$(id -g)")      # assign to DOCKER_ENV
+DOCKER_ENV+=("--env" "BUILD_USER=$(id -u -n)")  # assign to DOCKER_ENV
+DOCKER_ENV+=("--env" "BUILD_UID=$(id -u)")      # assign to DOCKER_ENV
+DOCKER_ENV+=("--env" "BUILD_GROUP=$(id -g -n)") # assign to DOCKER_ENV
+DOCKER_ENV+=("--env" "BUILD_GID=$(id -g)")      # assign to DOCKER_ENV
+DOCKER_ENV+=("--env" "BUILD_HOME=/$(id -u -n)") # assign to DOCKER_ENV
 
 # shellcheck disable=SC2207
-exposed_ports=($(docker inspect --format="{{.Config.ExposedPorts}}" "${image}" | sed "s/\([0-9].\)\/tcp\:{}/\1/g" | sed "s/map\[\([0-9]* [0-9]*\)\]/\1/g"))
+exposed_ports=($(docker inspect --format="{{.Config.ExposedPorts}}" "${image}" | sed "s/^map\[//" | sed "s/\]$//" | sed "s/\/tcp:{}//g"))
 seed="$(echo "${USER}" | md5sum | head -c 4)"
-for port in "${exposed_ports[@]}"; do
-  DOCKER_VOLUME+=("--publish $((seed + port)):${port}") # assign to DOCKER_VOLUME
-done
+if [ 0 = ${#DOCKER_PUBLISH[@]} ]; then
+  for port in "${exposed_ports[@]}"; do
+    DOCKER_PUBLISH+=("--publish" "$((seed + port)):${port}") # assign to DOCKER_VOLUME
+  done
+fi
 
-DOCKER_CMD=(${DOCKER_BINARY[@]+"${DOCKER_BINARY[@]}"} run
+DOCKER_CMD=(${DOCKER_BINARY[@]+"${DOCKER_BINARY[@]}"} "run"
   ${DOCKER_NAME[@]+"${DOCKER_NAME[@]}"}
   ${DOCKER_HOSTNAME[@]+"${DOCKER_HOSTNAME[@]}"}
   ${DOCKER_GPUS[@]+"${DOCKER_GPUS[@]}"}
@@ -213,14 +216,14 @@ DOCKER_CMD=(${DOCKER_BINARY[@]+"${DOCKER_BINARY[@]}"} run
   ${DOCKER_ENV[@]+"${DOCKER_ENV[@]}"}
   ${DOCKER_DEVICES[@]+"${DOCKER_DEVICES[@]}"}
   ${DOCKER_FLAGS[@]+"${DOCKER_FLAGS[@]}"}
-  ${DOCKER_IMAGE[@]+"${DOCKER_IMAGE[@]}"} bash
+  ${DOCKER_IMAGE[@]+"${DOCKER_IMAGE[@]}"}
   ${DOCKER_LOGIN[@]+"${DOCKER_LOGIN[@]}"}
   ${DOCKER_COMMAND[@]+"${DOCKER_COMMAND[@]}"})
 
 if ${dry_run}; then
   echo ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"}
 else
-  sed "1i ${name}" "${dk_containers_file}"
+  sed -i "1i ${name}" "${dk_containers_file}"
   ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"}
   sed -i "/${name}/d" "${dk_containers_file}"
 fi
