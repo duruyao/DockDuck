@@ -2,7 +2,7 @@
 
 ## date:   2022-03-08
 ## author: duruao@gmail.com
-## desc:   login container with the same user of host
+## desc:   login container with the administrator
 
 set -e
 
@@ -24,5 +24,4 @@ if [ -n "${BUILD_USER}" ] && [ -n "${BUILD_UID}" ] && [ -n "${BUILD_GROUP}" ] &&
   chown -R "${BUILD_USER}":"${BUILD_USER}" "${BUILD_HOME}"
 fi
 
-nohup /usr/sbin/sshd -D 1>>/tmp/nohup.out 2>&1 &
-sudo -u "#${BUILD_UID}" --preserve-env HOME="${BUILD_HOME}" "${COMMAND[@]}"
+${COMMAND[@]+"${COMMAND[@]}"}
