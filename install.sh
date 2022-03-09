@@ -22,14 +22,14 @@ Install dock-duck to the specified directory
 
 Options:
   -h, --help                    Display this help message
-      --prefix STRING           Specify an installation directory (default: "${HOME}/.dock-duck/bin")
+      --prefix STRING           Specify an installation directory (default: "${HOME}/.duck")
 
 See more about DockDucK at https://github.com/duruyao/DockDucK
 
 EOF
 }
 
-prefix="${HOME}/.dock-duck"
+prefix="${HOME}/.duck"
 
 ## parse arguments
 while (($#)); do
