@@ -19,7 +19,7 @@ if [ -n "${BUILD_USER}" ] && [ -n "${BUILD_UID}" ] && [ -n "${BUILD_GROUP}" ] &&
   cp -rf /duck/.vim "${BUILD_HOME}"/.vim
   cp -f /duck/.vimrc "${BUILD_HOME}"/.vimrc
   cp -f /duck/.tmux.conf "${BUILD_HOME}"/.tmux.conf
-  cat /duck/user.PS1 >>"${BUILD_HOME}"/.bashrc
+  cat /duck/user.bashrc >>"${BUILD_HOME}"/.bashrc
 
   chown -R "${BUILD_USER}":"${BUILD_USER}" "${BUILD_HOME}"
 fi
