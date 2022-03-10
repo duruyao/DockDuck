@@ -150,7 +150,7 @@ while (($#)); do
     image="${repo}:${tag}"
     DOCKER_IMAGE=("${image}") # assign to DOCKER_IMAGE
     if [ -z "${name}" ]; then
-      name="${USER}.${repo}.${tag}"
+      name="${USER}.${repo//*\//}.${tag}"
       # TODO: check if container exists
       #
       # TODO: rename container to a valid name
