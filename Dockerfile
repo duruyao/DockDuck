@@ -56,7 +56,22 @@ RUN echo "export LC_ALL=en_US.UTF-8" >>/etc/profile
 RUN echo "export LANGUAGE=en_US.UTF-8" >>/etc/profile
 
 ## configure command prompt
-RUN cat /duck/root.PS1 >>~/.bashrc
+RUN cat /duck/root.bashrc >>~/.bashrc
+
+## some environment variables are missing for users other than administrator
+## refer to https://stackoverflow.com/questions/34630571/docker-env-variables-not-set-while-log-via-shell
+## however, the following line is invalid for environment variables which are loaded at runtime
+#  RUN env | grep -E -v "^(HOME=|USER=|MAIL=|LC_ALL=|LS_COLORS=|LANG=|HOSTNAME=|PWD=|TERM=|SHLVL=|LANGUAGE=|_=|PS1=)" >>/etc/environment
+## TODO: manually add missing environment variables
+RUN echo "export CONDA_SHLVL=2" >>/duck/user.bashrc
+RUN echo "export LD_LIBRARY_PATH=/usr/local/envs/mc/lib" >>/duck/user.bashrc
+RUN echo "export CONDA_EXE=/usr/local/bin/conda" >>/duck/user.bashrc
+RUN echo "export CONDA_PREFIX=/usr/local/envs/mc" >>/duck/user.bashrc
+RUN echo "export CONDA_PREFIX_1=/usr/local" >>/duck/user.bashrc
+RUN echo "export CONDA_PYTHON_EXE=/usr/local/bin/python" >>/duck/user.bashrc
+RUN echo "export CONDA_PROMPT_MODIFIER=(mc)" >>/duck/user.bashrc
+RUN echo "export PATH=/usr/local/envs/mc/bin:/usr/local/condabin:/usr/local/nvidia/bin:/usr/local/cuda/bin:\$PATH" >>/duck/user.bashrc
+RUN echo "export CONDA_DEFAULT_ENV=mc" >>/duck/user.bashrc
 
 ########################################################
 # add custom packages and development environment here #
