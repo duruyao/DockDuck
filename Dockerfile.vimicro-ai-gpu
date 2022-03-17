@@ -1,0 +1,129 @@
+FROM onlyxool/vimicro-ai:gpu
+
+##  Copyright (c) 2022, DURUYAO. All rights reserved.
+##
+##  Licensed under the Apache License, Version 2.0 (the "License");
+##  you may not use this file except in compliance with the License.
+##  You may obtain a copy of the License at
+##
+##      http://www.apache.org/licenses/LICENSE-2.0
+##
+##  Unless required by applicable law or agreed to in writing, software
+##  distributed under the License is distributed on an "AS IS" BASIS,
+##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+##  See the License for the specific language governing permissions and
+##  limitations under the License.
+
+RUN apt-get update
+RUN apt-get upgrade -y
+
+ENV LC_ALL="C"
+ENV DEBIAN_FRONTEND="noninteractive"
+
+## install basic tools
+RUN apt-get install -y apt-utils
+RUN apt-get install -y sudo
+RUN apt-get install -y build-essential
+RUN apt-get install -y gcc g++ clang
+RUN apt-get install -y make cmake ninja-build autoconf automake
+RUN apt-get install -y gdb gdbserver
+RUN apt-get install -y tree
+RUN apt-get install -y git subversion
+RUN apt-get install -y locales locales-all
+RUN apt-get install -y zip unzip gzip tar
+RUN apt-get install -y vim
+RUN apt-get install -y tmux
+RUN apt-get install -y openssh-server rsync sshpass
+RUN apt-get install -y curl wget
+
+EXPOSE 22 1234
+
+COPY conf /duck
+COPY login /duck
+
+## configure proxy
+ARG HOST_PROXY="172.17.0.1:7890"
+ARG http_proxy="http://$HOST_PROXY"
+ARG https_proxy="http://$HOST_PROXY"
+ARG ftp_proxy="http://$HOST_PROXY"
+ARG no_proxy="localhost,127.0.0.0/8,::1"
+
+## configure vim
+RUN mkdir -p /duck/.vim/autoload && curl -LSso /duck/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+RUN mkdir -p /duck/.vim/bundle && git clone https://github.com/scrooloose/nerdtree.git /duck/.vim/bundle/nerdtree
+RUN cp /duck/.vimrc ~/.vimrc
+RUN cp -r /duck/.vim ~/.vim
+
+## configure tmux
+RUN cp /duck/.tmux.conf ~/.tmux.conf
+
+## configure ssh
+RUN mkdir /var/run/sshd
+RUN echo 'root:root' | chpasswd
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+
+## configure language
+RUN locale-gen en_US.UTF-8
+RUN echo "export LANG=en_US.UTF-8" >>/etc/profile
+RUN echo "export LC_ALL=en_US.UTF-8" >>/etc/profile
+RUN echo "export LANGUAGE=en_US.UTF-8" >>/etc/profile
+
+## configure command prompt
+RUN cat /duck/root.bashrc >>~/.bashrc
+
+## some environment variables are missing for users other than administrator
+## refer to https://stackoverflow.com/questions/34630571/docker-env-variables-not-set-while-log-via-shell
+## however, the following line is invalid for environment variables which are loaded at runtime
+#  RUN env | grep -E -v "^(HOME=|USER=|MAIL=|LC_ALL=|LS_COLORS=|LANG=|HOSTNAME=|PWD=|TERM=|SHLVL=|LANGUAGE=|_=|PS1=)" >>/etc/environment
+## TODO: manually add missing environment variables
+RUN echo "export CUDNN_VERSION=\"7.6.5.32\"" >>/duck/user.bashrc
+RUN echo "export NV_LIBCUBLAS_DEV_VERSION=\"10.2.2.89-1\"" >>/duck/user.bashrc
+RUN echo "export CONDA_SHLVL=\"2\"" >>/duck/user.bashrc
+RUN echo "export NV_CUDNN_PACKAGE_DEV=\"libcudnn7-dev=7.6.5.32-1+cuda10.2\"" >>/duck/user.bashrc
+RUN echo "export LD_LIBRARY_PATH=\"/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/envs/mc/lib:/usr/local/cuda-10.2/targets/x86_64-linux/lib\"" >>/duck/user.bashrc
+RUN echo "export CONDA_EXE=\"/usr/local/bin/conda\"" >>/duck/user.bashrc
+RUN echo "export NV_CUDNN_PACKAGE_VERSION=\"7.6.5.32-1\"" >>/duck/user.bashrc
+RUN echo "export NV_LIBNCCL_DEV_PACKAGE=\"libnccl-dev=2.11.4-1+cuda10.2\"" >>/duck/user.bashrc
+RUN echo "export IMAGE_VERSION=\"2021-12-21\"" >>/duck/user.bashrc
+RUN echo "export CONDA_PREFIX=\"/usr/local/envs/mc\"" >>/duck/user.bashrc
+RUN echo "export NV_LIBNPP_VERSION=\"10.2.89-1\"" >>/duck/user.bashrc
+RUN echo "export NVIDIA_VISIBLE_DEVICES=\"all\"" >>/duck/user.bashrc
+RUN echo "export NV_LIBCUSPARSE_VERSION=\"10.2.89-1\"" >>/duck/user.bashrc
+RUN echo "export NV_LIBCUBLAS_DEV_PACKAGE=\"libcublas-dev=10.2.2.89-1\"" >>/duck/user.bashrc
+RUN echo "export CONDA_PREFIX_1=\"/usr/local\"" >>/duck/user.bashrc
+RUN echo "export NCCL_VERSION=\"2.11.4-1\"" >>/duck/user.bashrc
+RUN echo "export NV_LIBNCCL_DEV_VERSION=\"2.11.4-1\"" >>/duck/user.bashrc
+RUN echo "export NVARCH=\"x86_64\"" >>/duck/user.bashrc
+RUN echo "export NV_LIBCUSPARSE_DEV_VERSION=\"10.2.89-1\"" >>/duck/user.bashrc
+RUN echo "export CONDA_PYTHON_EXE=\"/usr/local/bin/python\"" >>/duck/user.bashrc
+RUN echo "export NV_ML_REPO_URL=\"https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64\"" >>/duck/user.bashrc
+RUN echo "export NV_LIBNCCL_PACKAGE_VERSION=\"2.11.4-1\"" >>/duck/user.bashrc
+RUN echo "export NV_LIBNCCL_PACKAGE=\"libnccl2=2.11.4-1+cuda10.2\"" >>/duck/user.bashrc
+RUN echo "export NV_LIBNCCL_DEV_PACKAGE_NAME=\"libnccl-dev\"" >>/duck/user.bashrc
+RUN echo "export NV_CUDA_LIB_VERSION=\"10.2.89-1\"" >>/duck/user.bashrc
+RUN echo "export NV_ML_REPO_ENABLED=\"1\"" >>/duck/user.bashrc
+RUN echo "export NV_LIBNCCL_PACKAGE_NAME=\"libnccl2\"" >>/duck/user.bashrc
+RUN echo "export LIBRARY_PATH=\"/usr/local/cuda/lib64/stubs\"" >>/duck/user.bashrc
+RUN echo "export NV_NVTX_VERSION=\"10.2.89-1\"" >>/duck/user.bashrc
+RUN echo "export NV_LIBCUBLAS_VERSION=\"10.2.2.89-1\"" >>/duck/user.bashrc
+RUN echo "export NV_LIBCUBLAS_PACKAGE=\"libcublas10=10.2.2.89-1\"" >>/duck/user.bashrc
+RUN echo "export NV_CUDNN_VERSION=\"7.6.5.32\"" >>/duck/user.bashrc
+RUN echo "export CONDA_PROMPT_MODIFIER=\"(mc)\"" >>/duck/user.bashrc
+RUN echo "export NV_CUDA_CUDART_DEV_VERSION=\"10.2.89-1\"" >>/duck/user.bashrc
+RUN echo "export NV_NVML_DEV_VERSION=\"10.2.89-1\"" >>/duck/user.bashrc
+RUN echo "export CUDA_VERSION=\"10.2.89\"" >>/duck/user.bashrc
+RUN echo "export NV_LIBCUBLAS_PACKAGE_NAME=\"libcublas10\"" >>/duck/user.bashrc
+RUN echo "export NVIDIA_DRIVER_CAPABILITIES=\"compute,utility\"" >>/duck/user.bashrc
+RUN echo "export NV_LIBCUBLAS_DEV_PACKAGE_NAME=\"libcublas-dev\"" >>/duck/user.bashrc
+RUN echo "export NVIDIA_REQUIRE_CUDA=\"cuda>=10.2 brand=tesla,driver>=396,driver<397 brand=tesla,driver>=410,driver<411 brand=tesla,driver>=418,driver<419 brand=tesla,driver>=440,driver<441\"" >>/duck/user.bashrc
+RUN echo "export NV_LIBNPP_DEV_VERSION=\"10.2.89-1\"" >>/duck/user.bashrc
+RUN echo "export NV_CUDA_CUDART_VERSION=\"10.2.89-1\"" >>/duck/user.bashrc
+RUN echo "export NV_CUDNN_PACKAGE_NAME=\"libcudnn7\"" >>/duck/user.bashrc
+RUN echo "export PATH=\"/usr/local/envs/mc/bin:/usr/local/condabin:/usr/local/nvidia/bin:/usr/local/cuda/bin:\$PATH\"" >>/duck/user.bashrc
+RUN echo "export CONDA_DEFAULT_ENV=\"mc\"" >>/duck/user.bashrc
+RUN echo "export NV_CUDNN_PACKAGE=\"libcudnn7=7.6.5.32-1+cuda10.2\"" >>/duck/user.bashrc
+
+########################################################
+# add custom packages and development environment here #
+########################################################
