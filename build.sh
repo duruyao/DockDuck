@@ -18,7 +18,7 @@ Build a new dock-duck image with one more development kit layer than the base im
 
 Options:
   -h, --help                    Display this help message
-      --name STRING             Assign a name to the new image (default: "IMAGE-dk:TAG")
+      --name STRING             Assign a name to the new image (default: "IMAGE:TAG-dk")
 
 See more about DockDucK at https://github.com/duruyao/DockDucK
 
@@ -66,7 +66,7 @@ while (($#)); do
     fi
     image="$1"
     if [ -z "${name}" ]; then
-      name="${repo}-dk:${tag}"
+      name="${repo}:${tag}-dk"
     fi
     shift 1
     ;;
