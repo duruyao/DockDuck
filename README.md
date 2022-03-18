@@ -12,6 +12,8 @@ It has the following features:
 
 ## Build New DockDuck Images
 
+There are some built dock-duck images in the directory [duruyao/vimicro-ai](https://hub.docker.com/r/duruyao/vimicro-ai).
+
 ```shell
 bash path/to/DockDuck/build.sh [--name NEW_NAME] IMAGE
 ```
