@@ -6,9 +6,9 @@ DockDuck adds a development kit layer to a specific docker image, such as starti
 
 It has the following features:
 
-- Many development tools are pre-installed in the docker image (for developers).
-- Support logging into docker container through SSH protocol (for remote development and debugging).
-- Support logging into docker containers as the same user as the host (for solving the file permission problems introduced by the root user).
+- **Many development tools are pre-installed in the docker image (for developers)**.
+- **Support logging into docker container through SSH protocol (for remote development and debugging)**.
+- **Support logging into docker containers as the same user as the host (for solving the file permission problems introduced by the root user)**.
 
 ## Build New DockDuck Images
 
