@@ -44,6 +44,7 @@ EOF
 }
 
 function show_usage() {
+  cat "${dk_data_home}"/duck.logo
   cat <<EOF
 Usage: dk [OPTIONS] [COMMAND]
 
