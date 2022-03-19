@@ -2,7 +2,7 @@
 
 ![img/duck-logo.png](img/duck-logo.png)
 
-[简体中文](./README_zh-CN.md)
+[简体中文](README_zh-CN.md)
 
 DockDuck adds a development kit layer to a specific docker image, such as starting openssh-server and installing gdbserver, and provides some scripts as shortcuts for using docker.
 
@@ -16,11 +16,11 @@ It has the following features:
 
 There are some built dock-duck images in the directory [duruyao/vimicro-ai](https://hub.docker.com/r/duruyao/vimicro-ai).
 
+Modify the [Dockerfile](./Dockerfile) according to your needs before building.
+
 ```shell
 bash path/to/DockDuck/build.sh [--name NEW_NAME] IMAGE
 ```
-
-Modify the [Dockerfile](./Dockerfile) according to your needs.
 
 ## Install DockDuck Tools
 
