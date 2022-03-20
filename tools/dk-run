@@ -209,7 +209,7 @@ DOCKER_ENV+=("--env" "BUILD_HOME=/$(id -u -n)") # assign to DOCKER_ENV
 
 # shellcheck disable=SC2207
 exposed_ports=($(docker inspect --format="{{.Config.ExposedPorts}}" "${image}" | sed "s/^map\[//" | sed "s/\]$//" | sed "s/\/tcp:{}//g"))
-seed="$(echo "${USER}" | md5sum | head -c 4)"
+seed="$(echo "${USER}+${image}+${name}" | md5sum | head -c 4)"
 if [ 0 = ${#DOCKER_PUBLISH[@]} ]; then
   for port in "${exposed_ports[@]}"; do
     DOCKER_PUBLISH+=("--publish" "$((seed + port)):${port}") # assign to DOCKER_VOLUME
