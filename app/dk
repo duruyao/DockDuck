@@ -39,7 +39,7 @@ function errorln() {
 
 function show_version() {
   cat <<EOF
-DockDucK v2022.03.20
+DockDucK v2022.03.22
 EOF
 }
 
