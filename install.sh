@@ -122,3 +122,6 @@ if [ -n "$(command -v tree)" ]; then
 else
   ls "${dk_home}"
 fi
+
+echo ""
+echo "Type 'source ~/.bashrc' to reload PATH"
