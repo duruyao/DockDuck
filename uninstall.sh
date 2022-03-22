@@ -61,7 +61,7 @@ done
 echo "Uninstalling ..."
 echo
 
-if [ -z "${DK_HOME}" ]; then
+if [ "NOTFOUND" == "${DK_HOME-NOTFOUND}" ]; then
   warningln "Warning: \$DK_HOME not found"
   exit
 fi
