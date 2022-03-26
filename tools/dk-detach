@@ -36,10 +36,10 @@ Launch a new dock-duck container in the background
 
 Options:
       --dry-run                 Print the docker command to be run, but do not execute it
-      --gpus GPU-REQUEST        GPU devices to add to the container ('all' to pass all GPUs)
+      --gpus GPU-REQUEST        GPU devices to add to the container ("all" to pass all GPUs)
   -h, --help                    Display this help message
       --name STRING             Assign name to the container (default: "$USER.IMAGE.TAG")
-      --other-flags LIST        Append other flags to the command 'docker run ...'
+      --other-flags LIST        Append other flags to the command "docker run ..."
   -p, --publish LIST            Publish a container's port(s) to the host (default: ALL_EXPOSED_PORTS:RANDOM_PORTS)
   -v, --volume LIST             Bind mount a volume (default: "$PWD:$PWD")
 
