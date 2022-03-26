@@ -102,7 +102,7 @@ mkdir -p "${dk_tools_home}"
 
 cp "${PWD}"/app/* "${dk_home}"/
 cp "${PWD}"/tools/* "${dk_tools_home}"/
-cp "${PWD}"/img/* "${dk_data_home}"/
+cp "${PWD}"/img/*.logo "${dk_data_home}"/
 
 line="export DK_HOME=\"${dk_home}\""
 if ! grep -Fxq "${line}" "${HOME}"/.bashrc; then
