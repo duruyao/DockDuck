@@ -142,7 +142,6 @@ while (($#)); do
       show_usage >&2
       exit 1
     else
-      shift 1
       docker "$@"
       exit 0
     fi
