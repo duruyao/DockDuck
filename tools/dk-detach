@@ -39,6 +39,25 @@ Options:
       --gpus GPU-REQUEST        GPU devices to add to the container ("all" to pass all GPUs)
   -h, --help                    Display this help message
       --name STRING             Assign name to the container (default: "$USER.IMAGE.TAG")
+  -p, --publish LIST            Publish a container's port(s) to the host (default: ALL_EXPOSED_PORTS:RANDOM_PORTS)
+  -v, --volume LIST             Bind mount a volume (default: "$PWD:$PWD")
+
+See more about DockDucK at https://github.com/duruyao/DockDucK
+
+EOF
+}
+
+function show_usage_DEPRECATED() {
+  cat <<EOF
+Usage: dk detach [OPTIONS] IMAGE
+
+Launch a new dock-duck container in the background
+
+Options:
+      --dry-run                 Print the docker command to be run, but do not execute it
+      --gpus GPU-REQUEST        GPU devices to add to the container ("all" to pass all GPUs)
+  -h, --help                    Display this help message
+      --name STRING             Assign name to the container (default: "$USER.IMAGE.TAG")
       --other-flags LIST        Append other flags to the command "docker run ..."
   -p, --publish LIST            Publish a container's port(s) to the host (default: ALL_EXPOSED_PORTS:RANDOM_PORTS)
   -v, --volume LIST             Bind mount a volume (default: "$PWD:$PWD")
@@ -119,6 +138,7 @@ while (($#)); do
       exit 1
     fi
     DOCKER_FLAGS+=("$2") # assign to DOCKER_FLAGS
+    warningln "Warning: deprecated option: --other-flags"
     shift 2
     ;;
 
