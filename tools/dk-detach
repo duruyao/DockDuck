@@ -99,13 +99,13 @@ while (($#)); do
 
   --gpus)
     if [ -z "$2" ]; then
-      errorln "Error: $1 requires a non empty argument" >&2
+      errorln "Error: '$1' requires a non empty argument" >&2
       show_usage >&2
       exit 1
     fi
     # check if nvidia-docker exists
     if [ -z "$(command -v nvidia-docker)" ]; then
-      errorln "Error: Command 'nvidia-docker' not found, see https://github.com/NVIDIA/nvidia-docker" >&2
+      errorln "Error: 'nvidia-docker' required but not found" >&2
       show_usage >&2
       exit 1
     fi
@@ -120,7 +120,7 @@ while (($#)); do
 
   --name)
     if [ -z "$2" ]; then
-      errorln "Error: $1 requires a non empty argument" >&2
+      errorln "Error: '$1' requires a non empty argument" >&2
       show_usage >&2
       exit 1
     fi
@@ -133,7 +133,7 @@ while (($#)); do
 
   --other-flags)
     if [ -z "$2" ]; then
-      errorln "Error: $1 requires a non empty argument" >&2
+      errorln "Error: '$1' requires a non empty argument" >&2
       show_usage >&2
       exit 1
     fi
@@ -144,7 +144,7 @@ while (($#)); do
 
   -p | --publish)
     if [ -z "$2" ]; then
-      errorln "Error: $1 requires a non empty argument" >&2
+      errorln "Error: '$1' requires a non empty argument" >&2
       show_usage >&2
       exit 1
     fi
@@ -154,7 +154,7 @@ while (($#)); do
 
   -v | --volume)
     if [ -z "$2" ]; then
-      errorln "Error: $1 requires a non empty argument" >&2
+      errorln "Error: '$1' requires a non empty argument" >&2
       show_usage >&2
       exit 1
     fi
@@ -165,7 +165,7 @@ while (($#)); do
     ;;
 
   --* | -*)
-    errorln "Error: Unknown flag: $1" >&2
+    errorln "Error: Unknown flag: '$1'" >&2
     show_usage >&2
     exit 1
     ;;
@@ -177,7 +177,7 @@ while (($#)); do
       tag="latest"
     fi
     if ! docker images | grep -q "${repo} .*${tag}"; then
-      errorln "Error: No such docker image: $1" >&2
+      errorln "Error: No such docker image: '$1'" >&2
       show_usage >&2
       exit 1
     fi

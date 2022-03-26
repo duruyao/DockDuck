@@ -51,7 +51,7 @@ while (($#)); do
     ;;
 
   --* | -* | *)
-    errorln "Error: Unknown flag: $1" >&2
+    errorln "Error: Unknown flag: '$1'" >&2
     show_usage >&2
     exit 1
     ;;
