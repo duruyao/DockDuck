@@ -36,16 +36,16 @@ function show_usage() {
   cat <<EOF
 Usage: dk run [OPTIONS] IMAGE [COMMAND]
 
-Run a command (default: "bash") in a new dock-duck container
+Run a command (default: 'bash') in a new dock-duck container
 
 Options:
   -d, --detach                  Run Container in background and print container ID
       --dry-run                 Print the docker command to be run, but do not execute it
-      --gpus GPU-REQUEST        GPU devices to add to the container ("all" to pass all GPUs)
+      --gpus GPU-REQUEST        GPU devices to add to the container ('all' to pass all GPUs)
   -h, --help                    Display this help message
-      --name STRING             Assign name to the container (default: "$USER.IMAGE.TAG")
-  -p, --publish LIST            Publish a container's port(s) to the host (default: ALL_EXPOSED_PORTS:RANDOM_PORTS)
-  -v, --volume LIST             Bind mount a volume (default: "$PWD:$PWD")
+      --name STRING             Assign name to the container (default: '$USER.IMAGE.TAG')
+  -p, --publish LIST            Publish a container's port(s) to the host (default: 'ALL_EXPOSED_PORTS:RANDOM_PORTS')
+  -v, --volume LIST             Bind mount a volume (default: '$PWD:$PWD')
 
 See more about DockDucK at https://github.com/duruyao/DockDucK
 
