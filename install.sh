@@ -124,4 +124,4 @@ else
 fi
 
 echo ""
-echo "Type 'source ~/.bashrc' to reload PATH"
+echo "Try 'source ~/.bashrc' to reload PATH"
