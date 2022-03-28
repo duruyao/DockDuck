@@ -37,7 +37,7 @@ Uninstall dock-duck from \$DK_HOME
 Options:
   -h, --help                    Display this help message
 
-See more about DockDucK at https://github.com/duruyao/DockDucK
+See more about DockDuck at https://github.com/duruyao/DockDuck
 
 EOF
 }

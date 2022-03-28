@@ -47,7 +47,7 @@ Options:
   -p, --publish LIST            Publish a container's port(s) to the host (default: 'ALL_EXPOSED_PORTS:RANDOM_PORTS')
   -v, --volume LIST             Bind mount a volume (default: '$PWD:$PWD')
 
-See more about DockDucK at https://github.com/duruyao/DockDucK
+See more about DockDuck at https://github.com/duruyao/DockDuck
 
 EOF
 }
@@ -68,7 +68,7 @@ Options:
   -p, --publish LIST            Publish a container's port(s) to the host (default: ALL_EXPOSED_PORTS:RANDOM_PORTS)
   -v, --volume LIST             Bind mount a volume (default: "$PWD:$PWD")
 
-See more about DockDucK at https://github.com/duruyao/DockDucK
+See more about DockDuck at https://github.com/duruyao/DockDuck
 
 EOF
 }

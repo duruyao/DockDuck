@@ -34,7 +34,7 @@ Options:
   -h, --help                    Display this help message
       --name STRING             Assign a name to the new image (default: "IMAGE:TAG-dk")
 
-See more about DockDucK at https://github.com/duruyao/DockDucK
+See more about DockDuck at https://github.com/duruyao/DockDuck
 
 EOF
 }

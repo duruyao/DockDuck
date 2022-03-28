@@ -53,7 +53,7 @@ Commands:
 
 Run 'dk COMMAND --help' for more information on a command
 
-See more about DockDucK at https://github.com/duruyao/DockDucK
+See more about DockDuck at https://github.com/duruyao/DockDuck
 
 ```
 

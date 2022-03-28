@@ -38,7 +38,7 @@ Options:
   -h, --help                    Display this help message
       --prefix STRING           Specify an installation directory (default: "${HOME}/.duck")
 
-See more about DockDucK at https://github.com/duruyao/DockDucK
+See more about DockDuck at https://github.com/duruyao/DockDuck
 
 EOF
 }
