@@ -38,7 +38,7 @@ bash path/to/DockDuck/install.sh [DIRECTORT]
 ```shell
 Usage: dk [OPTIONS] [COMMAND]
 
-A shortcut for using dock-duck containers
+Tools for using dock-duck containers
 
 Options:
   -h, --help                    Display this help message
@@ -47,9 +47,11 @@ Options:
 Commands:
   attach                        Attach to a running dock-duck container
   detach                        Launch a new dock-duck container in the background
+  images                        List images
   ps                            List running dock-duck containers
   run                           Run a command in a new dock-duck container
   stop                          Stop one or more running containers
+  update                        Update dock-duck tools
 
 Run 'dk COMMAND --help' for more information on a command
 
