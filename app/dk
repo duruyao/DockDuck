@@ -43,7 +43,7 @@ function warningln() {
 
 function show_version() {
   cat <<EOF
-DockDucK v2022.03.27-pre
+DockDucK v2022.03.28
 EOF
 }
 
