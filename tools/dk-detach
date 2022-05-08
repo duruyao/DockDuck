@@ -176,8 +176,8 @@ while (($#)); do
     if ! echo "$1" | grep -q ":"; then
       tag="latest"
     fi
-    if ! docker images | grep -q "${repo} .*${tag}"; then
-      errorln "Error: No such docker image: '$1'" >&2
+    if [ -z "$(docker images -q "${repo}:${tag}")" ]; then
+      errorln "Error: No such docker image: '${repo}:${tag}'" >&2
       show_usage >&2
       exit 1
     fi
