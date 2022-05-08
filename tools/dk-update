@@ -21,11 +21,11 @@
 set -euo pipefail
 
 function errorln() {
-  printf "\033[1;32;31m%s\n\033[m" "${1}"
+  printf "\033[1;32;31m%s\n\033[m" "$1"
 }
 
 function infoln() {
-  printf "\033[0;32;32m%s\n\033[m" "${1}"
+  printf "\033[0;32;32m%s\n\033[m" "$1"
 }
 
 function show_usage() {
@@ -75,7 +75,7 @@ if [ -z "${latest_tag}" ]; then
   show_usage >&2
   exit 1
 fi
-infoln "Detected latest tag: ${latest_tag}"
+infoln "Detected latest tag: '${latest_tag}'"
 
 url="https://github.com/duruyao/DockDuck/archive/refs/tags/${latest_tag}.tar.gz"
 latest_release=${latest_tag//v/}

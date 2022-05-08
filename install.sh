@@ -21,11 +21,11 @@
 set -euo pipefail
 
 function errorln() {
-  printf "\033[1;32;31m%s\n\033[m" "${1}"
+  printf "\033[1;32;31m%s\n\033[m" "$1"
 }
 
 function warningln() {
-  printf "\033[1;33m%s\n\033[m" "${1}"
+  printf "\033[1;33m%s\n\033[m" "$1"
 }
 
 function show_usage() {
@@ -55,11 +55,11 @@ while (($#)); do
 
   --prefix)
     if [ -z "$2" ]; then
-      errorln "Error: $1 requires a non empty argument" >&2
+      errorln "Error: '$1' requires a non empty argument" >&2
       show_usage >&2
       exit 1
     elif [ ! -d "$2" ]; then
-      errorln "Error: No such directory: $2" >&2
+      errorln "Error: No such directory: '$2'" >&2
       show_usage >&2
       exit 1
     fi
@@ -68,7 +68,7 @@ while (($#)); do
     ;;
 
   --* | -* | *)
-    errorln "Error: Unknown flag: $1" >&2
+    errorln "Error: Unknown flag: '$1'" >&2
     show_usage >&2
     exit 1
     ;;

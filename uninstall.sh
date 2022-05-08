@@ -21,11 +21,11 @@
 set -euo pipefail
 
 function errorln() {
-  printf "\033[1;32;31m%s\n\033[m" "${1}"
+  printf "\033[1;32;31m%s\n\033[m" "$1"
 }
 
 function warningln() {
-  printf "\033[1;33m%s\n\033[m" "${1}"
+  printf "\033[1;33m%s\n\033[m" "$1"
 }
 
 function show_usage() {
@@ -51,7 +51,7 @@ while (($#)); do
     ;;
 
   --* | -* | *)
-    errorln "Error: Unknown flag: $1" >&2
+    errorln "Error: Unknown flag: '$1'" >&2
     show_usage >&2
     exit 1
     ;;
