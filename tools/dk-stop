@@ -22,10 +22,12 @@ set -euo pipefail
 
 dk_home="$(dirname "$(dirname "$(realpath "$0")")")"
 dk_data_home="${dk_home}/dk-data"
+dk_tools_home="${dk_home}/dk-tools"
 dk_containers_file="${dk_data_home}"/containers.txt
 
 default_container=""
 default_container_info=""
+"${dk_tools_home}"/dk-ps 1>/dev/null 2>&1
 if [ -n "$(head -1 "${dk_containers_file}")" ]; then
   default_container="$(head -1 "${dk_containers_file}")"
   default_container_info="(default: \"${default_container}\")"

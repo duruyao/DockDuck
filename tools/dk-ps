@@ -59,9 +59,16 @@ while (($#)); do
 done
 
 docker ps -a | grep NAMES
-
-grep -v '^ *#' <"${dk_containers_file}" | while IFS= read -r container; do
+random_file="/tmp/$(date | md5sum | head -c 32)"
+awk "!seen[\$0]++" "${dk_containers_file}" >"${random_file}"
+cp "${random_file}" "${dk_containers_file}"
+grep -v '^ *#' <"${random_file}" | while IFS= read -r container; do
   if [ -n "${container}" ]; then
-    docker ps -a | grep "${container}"
+    if ! docker ps -a | grep -q "${container}"; then
+      sed -i "/${container}/d" "${dk_containers_file}"
+    else
+      docker ps -a | grep "${container}"
+    fi
   fi
 done
+rm "${random_file}"
