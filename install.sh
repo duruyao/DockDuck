@@ -114,6 +114,11 @@ if ! grep -Fxq "${line}" "${HOME}"/.bashrc; then
   echo "${line}" >>"${HOME}"/.bashrc
 fi
 
+line="source \$DK_HOME/dk-tools/dk-complete"
+if ! grep -Fxq "${line}" "${HOME}"/.bashrc; then
+  echo "${line}" >>"${HOME}"/.bashrc
+fi
+
 source "${HOME}"/.bashrc
 
 echo "Install dock-duck to ${dk_home}"

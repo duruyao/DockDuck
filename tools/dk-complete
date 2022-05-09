@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+##  Copyright (c) 2022, DURUYAO. All rights reserved.
+##
+##  Licensed under the Apache License, Version 2.0 (the "License");
+##  you may not use this file except in compliance with the License.
+##  You may obtain a copy of the License at
+##
+##      http://www.apache.org/licenses/LICENSE-2.0
+##
+##  Unless required by applicable law or agreed to in writing, software
+##  distributed under the License is distributed on an "AS IS" BASIS,
+##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+##  See the License for the specific language governing permissions and
+##  limitations under the License.
+
+## date:   2022-05-09
+## author: duruao@gmail.com
+## desc:   autocomplete command line by pressing tab key
+
+dk_complete_func() {
+  local cur=${COMP_WORDS[COMP_CWORD]}
+  local dk_sub_commands=("attach" "detach" "images" "ps" "run" "stop" "update")
+  local dk_sub_commands_options=("-d" "--detach" "--dry-run" "-h" "--help" "--gpus"
+    "--name" "-p" "--publish" "-v" "--version" "--volume")
+  # shellcheck disable=SC2207
+  local dk_images=($(docker images --format "table {{.Repository}}:{{.Tag}}" | tail -n +2))
+  # shellcheck disable=SC2207
+  local dk_containers=($(docker ps --format "table {{.Names}}" | tail -n +2))
+  local word_list=(${dk_sub_commands[@]+"${dk_sub_commands[@]}"}
+    ${dk_sub_commands_options[@]+"${dk_sub_commands_options[@]}"}
+    ${dk_images[@]+"${dk_images[@]}"} ${dk_containers[@]+"${dk_containers[@]}"})
+  # shellcheck disable=SC2207
+  COMPREPLY=($(compgen -W "${word_list[*]}" -- "${cur}"))
+}
+
+complete -F dk_complete_func dk

@@ -81,6 +81,9 @@ sed -i "/${line}/d" "${HOME}"/.bashrc
 line="export PATH=\"\$DK_HOME:\$PATH\""
 sed -i "/${line}/d" "${HOME}"/.bashrc
 
+line="source \$DK_HOME.*"
+sed -i "/${line}/d" "${HOME}"/.bashrc
+
 source "${HOME}"/.bashrc
 
 echo "Uninstall dock-duck from ${dk_home}"
