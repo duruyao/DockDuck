@@ -20,11 +20,11 @@
 
 set -euo pipefail
 
-function errorln() {
+function error_ln() {
   printf "\033[1;32;31m%s\n\033[m" "$1"
 }
 
-function infoln() {
+function info_ln() {
   printf "\033[0;32;32m%s\n\033[m" "$1"
 }
 
@@ -56,7 +56,7 @@ while (($#)); do
     ;;
 
   --* | -* | *)
-    errorln "Error: Unknown flag: '$1'" >&2
+    error_ln "Error: Unknown flag: '$1'" >&2
     show_usage >&2
     exit 1
     ;;
@@ -64,29 +64,29 @@ while (($#)); do
 done
 
 if [ -z "$(command -v curl)" ]; then
-  errorln "Error: 'curl' required but not found" >&2
+  error_ln "Error: 'curl' required but not found" >&2
   show_usage >&2
   exit 1
 fi
 
 latest_tag="$(get_latest_tag duruyao/DockDuck)"
 if [ -z "${latest_tag}" ]; then
-  errorln "Error: Latest tag required but not found, please check your network" >&2
+  error_ln "Error: Latest tag required but not found, please check your network" >&2
   show_usage >&2
   exit 1
 fi
-infoln "Detected latest tag: '${latest_tag}'"
+info_ln "Detected latest tag: '${latest_tag}'"
 
 url="https://github.com/duruyao/DockDuck/archive/refs/tags/${latest_tag}.tar.gz"
 latest_release=${latest_tag//v/}
 
 if [ -z "$(command -v tar)" ]; then
-  errorln "Error: 'tar' required but not found" >&2
+  error_ln "Error: 'tar' required but not found" >&2
   show_usage >&2
   exit 1
 fi
 if [ -z "$(command -v gzip)" ]; then
-  errorln "Error: 'gzip' required but not found" >&2
+  error_ln "Error: 'gzip' required but not found" >&2
   show_usage >&2
   exit 1
 fi
@@ -94,12 +94,12 @@ fi
 tmp_dir="/tmp/$(date | md5sum | head -c 10)"
 mkdir -p "${tmp_dir}"
 pushd "${tmp_dir}" 1>/dev/null
-infoln "Downloading package from ${url} ..."
+info_ln "Downloading package from ${url} ..."
 curl -LSso DockDuck-"${latest_release}".tar.gz "${url}"
 tar -zxvf DockDuck-"${latest_release}".tar.gz 1>/dev/null
 pushd DockDuck-"${latest_release}" 1>/dev/null
 if [ "NOTFOUND" == "${DK_HOME-NOTFOUND}" ]; then
-  warningln "Warning: \$DK_HOME not found, use default '$USER/.duck'"
+  warning_ln "Warning: \$DK_HOME not found, use default '$USER/.duck'"
   bash install.sh
 else
   bash install.sh --prefix "${DK_HOME}"

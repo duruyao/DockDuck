@@ -20,11 +20,11 @@
 
 set -euo pipefail
 
-function errorln() {
+function error_ln() {
   printf "\033[1;32;31m%s\n\033[m" "$1"
 }
 
-function warningln() {
+function warning_ln() {
   printf "\033[1;33m%s\n\033[m" "$1"
 }
 
@@ -51,7 +51,7 @@ while (($#)); do
     ;;
 
   --* | -* | *)
-    errorln "Error: Unknown flag: '$1'" >&2
+    error_ln "Error: Unknown flag: '$1'" >&2
     show_usage >&2
     exit 1
     ;;
@@ -62,7 +62,7 @@ echo "Uninstalling ..."
 echo
 
 if [ "NOTFOUND" == "${DK_HOME-NOTFOUND}" ]; then
-  warningln "Warning: \$DK_HOME not found"
+  warning_ln "Warning: \$DK_HOME not found"
   exit
 fi
 

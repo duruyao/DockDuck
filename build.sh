@@ -20,7 +20,7 @@
 
 set -euo pipefail
 
-function errorln() {
+function error_ln() {
   printf "\033[1;32;31m%s\n\033[m" "$1"
 }
 
@@ -43,7 +43,7 @@ image=""
 name=""
 
 if [ -z "$(command -v docker)" ]; then
-  errorln "Error: 'docker' required but not found" >&2
+  error_ln "Error: 'docker' required but not found" >&2
   show_usage >&2
   exit 1
 fi
@@ -62,7 +62,7 @@ while (($#)); do
     ;;
 
   --* | -*)
-    errorln "Error: Unknown flag: '$1'" >&2
+    error_ln "Error: Unknown flag: '$1'" >&2
     show_usage >&2
     exit 1
     ;;
@@ -74,7 +74,7 @@ while (($#)); do
       tag="latest"
     fi
     if [ -z "$(docker images -q "${repo}:${tag}")" ]; then
-      errorln "Error: No such docker image: '${repo}:${tag}'" >&2
+      error_ln "Error: No such docker image: '${repo}:${tag}'" >&2
       show_usage >&2
       exit 1
     fi
@@ -88,7 +88,7 @@ while (($#)); do
 done
 
 if [ -z "${image}" ]; then
-  errorln "Error: Missing IMAGE" >&2
+  error_ln "Error: Missing IMAGE" >&2
   show_usage >&2
   exit 1
 fi

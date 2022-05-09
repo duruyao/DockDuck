@@ -20,11 +20,11 @@
 
 set -euo pipefail
 
-function errorln() {
+function error_ln() {
   printf "\033[1;32;31m%s\n\033[m" "$1"
 }
 
-function warningln() {
+function warning_ln() {
   printf "\033[1;33m%s\n\033[m" "$1"
 }
 
@@ -55,11 +55,11 @@ while (($#)); do
 
   --prefix)
     if [ -z "$2" ]; then
-      errorln "Error: '$1' requires a non empty argument" >&2
+      error_ln "Error: '$1' requires a non empty argument" >&2
       show_usage >&2
       exit 1
     elif [ ! -d "$2" ]; then
-      errorln "Error: No such directory: '$2'" >&2
+      error_ln "Error: No such directory: '$2'" >&2
       show_usage >&2
       exit 1
     fi
@@ -68,7 +68,7 @@ while (($#)); do
     ;;
 
   --* | -* | *)
-    errorln "Error: Unknown flag: '$1'" >&2
+    error_ln "Error: Unknown flag: '$1'" >&2
     show_usage >&2
     exit 1
     ;;
@@ -83,7 +83,7 @@ dk_data_home="${dk_home}/dk-data"
 dk_tools_home="${dk_home}/dk-tools"
 
 if [ -f "${dk_home}/dk" ] || [ -d "${dk_data_home}" ] || [ -d "${dk_tools_home}" ]; then
-  warningln "Warning: There may already be a dock-duck ($("${dk_home}"/dk -v | sed "s/.* //")) in ${dk_home}"
+  warning_ln "Warning: There may already be a dock-duck ($("${dk_home}"/dk -v | sed "s/.* //")) in ${dk_home}"
   # shellcheck disable=SC2162
   read -p "Do you want to continue installing the current version? [Y/n] " install_dk
   # shellcheck disable=SC2143
