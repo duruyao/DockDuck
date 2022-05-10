@@ -19,19 +19,94 @@
 ## desc:   autocomplete command line by pressing tab key
 
 dk_complete_func() {
-  local cur=${COMP_WORDS[COMP_CWORD]}
+  local curr=${COMP_WORDS[COMP_CWORD]}
+
   local dk_sub_commands=("attach" "detach" "images" "ps" "run" "stop" "update")
-  local dk_sub_commands_options=("-d" "--detach" "--dry-run" "-h" "--help" "--gpus"
-    "--name" "-p" "--publish" "-v" "--version" "--volume")
+  local dk_options=("-h" "--help" "-v" "--version")
+  local dk_word_list=(
+    ${dk_sub_commands[@]+"${dk_sub_commands[@]}"}
+    ${dk_options[@]+"${dk_options[@]}"}
+  )
+
+  local attach_options=("--dry-run" "-h" "--help")
   # shellcheck disable=SC2207
-  local dk_images=($(docker images --format "table {{.Repository}}:{{.Tag}}" | tail -n +2))
+  local containers=($(docker ps --format "table {{.Names}}" | tail -n +2))
+  local attach_word_list=(
+    ${attach_options[@]+"${attach_options[@]}"}
+    ${containers[@]+"${containers[@]}"}
+  )
+
+  local detach_options=("--dry-run" "--gpus" "-h" "--help" "--name" "--other-flags" "-p" "--publish" "-v" "--volume")
   # shellcheck disable=SC2207
-  local dk_containers=($(docker ps --format "table {{.Names}}" | tail -n +2))
-  local word_list=(${dk_sub_commands[@]+"${dk_sub_commands[@]}"}
-    ${dk_sub_commands_options[@]+"${dk_sub_commands_options[@]}"}
-    ${dk_images[@]+"${dk_images[@]}"} ${dk_containers[@]+"${dk_containers[@]}"})
-  # shellcheck disable=SC2207
-  COMPREPLY=($(compgen -W "${word_list[*]}" -- "${cur}"))
+  local images=($(docker images --format "table {{.Repository}}:{{.Tag}}" | tail -n +2))
+  local detach_word_list=(
+    ${detach_options[@]+"${detach_options[@]}"}
+    ${images[@]+"${images[@]}"}
+  )
+
+  local images_options=("-h" "--help")
+  local images_word_list=(
+    ${images_options[@]+"${images_options[@]}"}
+  )
+
+  local ps_options=("-h" "--help")
+  local ps_word_list=(
+    ${ps_options[@]+"${ps_options[@]}"}
+  )
+
+  local run_options=("--dry-run" "--gpus" "-h" "--help" "--name" "--other-flags" "-p" "--publish" "-v" "--volume")
+  local run_word_list=(
+    ${run_options[@]+"${run_options[@]}"}
+    ${images[@]+"${images[@]}"}
+  )
+
+  local stop_options=("--dry-run" "-h" "--help")
+  local stop_word_list=(
+    ${stop_options[@]+"${stop_options[@]}"}
+    ${containers[@]+"${containers[@]}"}
+  )
+
+  local update_options=("-h" "--help")
+  local update_word_list=(
+    ${update_options[@]+"${update_options[@]}"}
+  )
+
+  if [[ ${COMP_CWORD} -eq 1 ]]; then
+    # shellcheck disable=SC2207
+    COMPREPLY=($(compgen -W "${dk_word_list[*]}" -- "${curr}"))
+  else
+    local second=${COMP_WORDS[1]}
+    case "${second}" in
+    "attach")
+      # shellcheck disable=SC2207
+      COMPREPLY=($(compgen -W "${attach_word_list[*]}" -- "${curr}"))
+      ;;
+    "detach")
+      # shellcheck disable=SC2207
+      COMPREPLY=($(compgen -W "${detach_word_list[*]}" -- "${curr}"))
+      ;;
+    "images")
+      # shellcheck disable=SC2207
+      COMPREPLY=($(compgen -W "${images_word_list[*]}" -- "${curr}"))
+      ;;
+    "ps")
+      # shellcheck disable=SC2207
+      COMPREPLY=($(compgen -W "${ps_word_list[*]}" -- "${curr}"))
+      ;;
+    "run")
+      # shellcheck disable=SC2207
+      COMPREPLY=($(compgen -W "${run_word_list[*]}" -- "${curr}"))
+      ;;
+    "stop")
+      # shellcheck disable=SC2207
+      COMPREPLY=($(compgen -W "${stop_word_list[*]}" -- "${curr}"))
+      ;;
+    "update")
+      # shellcheck disable=SC2207
+      COMPREPLY=($(compgen -W "${update_word_list[*]}" -- "${curr}"))
+      ;;
+    esac
+  fi
 }
 
 complete -F dk_complete_func dk
