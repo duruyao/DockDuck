@@ -8,30 +8,43 @@ DockDuck adds a development kit layer to a specific docker image, such as starti
 
 It has the following features:
 
-- **Support adding development kits to docker images to form dock-duck images** (for developers).
-- **Support logging into dock-duck container through SSH protocol** (for remote development and debugging).
-- **Support logging into dock-duck containers as the same user as the host** (for solving the file permission problems introduced by the root user).
-- **Provide dock-duck tools** (encapsulates the commonly used docker command line interface).
+1) **Support adding development kits to docker images to generate dock-duck images**.
+2) **Support logging into dock-duck container through SSH protocol**.
+3) **Support logging into dock-duck containers as the same user as the host**.
+4) **Provide dock-duck tools to use dock-duck images quickly**.
 
-## Build New DockDuck Images
+## 1. Prerequisites
 
-There are some built dock-duck images in the directory [duruyao/vimicro-ai](https://hub.docker.com/r/duruyao/vimicro-ai).
+- [GNU Bash](https://www.gnu.org/software/bash/)
+- [UNIX-like OS](https://en.wikipedia.org/wiki/Unix-like)
+
+## 2. Quick Start
+
+### 2.1. Build New DockDuck Image
+
+There are some pre-built dock-duck images in the directory [duruyao/vimicro-ai](https://hub.docker.com/r/duruyao/vimicro-ai).
 
 Modify the [Dockerfile](./Dockerfile) according to your needs before building.
 
 ```shell
-bash path/to/DockDuck/build.sh [--name NEW_NAME] IMAGE
+bash dk-build.sh [--name NEW_NAME] IMAGE
 ```
 
-## Install DockDuck Tools
+### 2.2. Install DockDuck Tools
 
 Download suitable [releases](https://github.com/duruyao/DockDuck/releases) for your OS (currently only supports UNIX-like OS).
 
 ```shell
-bash path/to/DockDuck/install.sh [DIRECTORT]
+bash dk-install.sh [DIRECTORT]
 ```
 
-## Use DockDuck Tools
+Reload Bash configuration.
+
+```bash
+source ~/.bashrc
+```
+
+### 2.3. Use DockDuck Tools
 
 Type `dk -h` or `dk --help` to show usage:
 
@@ -59,8 +72,8 @@ See more about DockDuck at https://github.com/duruyao/DockDuck
 
 ```
 
-## Uninstall DockDuck Tools
+### 2.4. Uninstall DockDuck Tools
 
 ```shell
-bash path/to/DockDuck/uninstall.sh
+bash dk-uninstall.sh
 ```
