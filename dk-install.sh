@@ -118,7 +118,7 @@ if ! grep -Fxq "${line}" "${HOME}"/.bashrc; then
   echo "${line}" >>"${HOME}"/.bashrc
 fi
 
-line="source \$DK_HOME/dk-tools/dk-complete"
+line="source \$DK_HOME/tools/dk-complete" # FIXME: use variable instead of value
 if ! grep -Fxq "${line}" "${HOME}"/.bashrc; then
   echo "${line}" >>"${HOME}"/.bashrc
 fi
