@@ -64,6 +64,7 @@ Commands:
   ps                            List running dock-duck containers
   run                           Run a command in a new dock-duck container
   stop                          Stop one or more running containers
+  uninstall                     Uninstall dock-duck tools
   update                        Update dock-duck tools
 
 Run 'dk COMMAND --help' for more information on a command
@@ -72,7 +73,13 @@ See more about DockDuck at https://github.com/duruyao/DockDuck
 
 ```
 
-## 2.4. 卸载 DockDuck 工具集
+## 2.4. 更新 DockDuck 工具集
+
+```shell
+dk update
+```
+
+## 2.5. 卸载 DockDuck 工具集
 
 ```shell
 dk uninstall
