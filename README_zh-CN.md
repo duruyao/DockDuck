@@ -20,6 +20,8 @@
 
 ## 2. 快速开始
 
+下载适合你的操作系统的 [发布版本](https://github.com/duruyao/DockDuck/releases) （只支持类 UNIX 操作系统）。
+
 ### 2.1. 构建新的 DockDuck 镜像
 
 在 [duruyao/vimicro-ai](https://hub.docker.com/r/duruyao/vimicro-ai) 目录下有一些预构建的 dock-duck 镜像。
@@ -31,8 +33,6 @@ bash dk-build.sh [--name NEW_NAME] IMAGE
 ```
 
 ## 2.2. 安装 DockDuck 工具集
-
-下载适合你的操作系统的 [发布版本](https://github.com/duruyao/DockDuck/releases) （只支持类 UNIX 操作系统）。
 
 ```shell
 bash dk-install.sh [DIRECTORT]

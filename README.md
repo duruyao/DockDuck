@@ -20,6 +20,8 @@ It has the following features:
 
 ## 2. Quick Start
 
+Download suitable [releases](https://github.com/duruyao/DockDuck/releases) for your OS (currently only supports UNIX-like OS).
+
 ### 2.1. Build New DockDuck Image
 
 There are some pre-built dock-duck images in the directory [duruyao/vimicro-ai](https://hub.docker.com/r/duruyao/vimicro-ai).
@@ -31,8 +33,6 @@ bash dk-build.sh [--name NEW_NAME] IMAGE
 ```
 
 ### 2.2. Install DockDuck Tools
-
-Download suitable [releases](https://github.com/duruyao/DockDuck/releases) for your OS (currently only supports UNIX-like OS).
 
 ```shell
 bash dk-install.sh [DIRECTORT]
