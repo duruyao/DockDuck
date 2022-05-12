@@ -32,7 +32,7 @@
 bash dk-build.sh [--name NEW_NAME] IMAGE
 ```
 
-## 2.2. 安装 DockDuck 工具集
+### 2.2. 安装 DockDuck 工具集
 
 ```shell
 bash dk-install.sh [DIRECTORT]
@@ -44,7 +44,7 @@ bash dk-install.sh [DIRECTORT]
 source ~/.bashrc
 ```
 
-## 2.3. 使用 DockDuck 工具集
+### 2.3. 使用 DockDuck 工具集
 
 使用 `dk -h` 或 `dk --help` 获取使用说明：
 
@@ -73,13 +73,13 @@ See more about DockDuck at https://github.com/duruyao/DockDuck
 
 ```
 
-## 2.4. 更新 DockDuck 工具集
+### 2.4. 更新 DockDuck 工具集
 
 ```shell
 dk update
 ```
 
-## 2.5. 卸载 DockDuck 工具集
+### 2.5. 卸载 DockDuck 工具集
 
 ```shell
 dk uninstall
