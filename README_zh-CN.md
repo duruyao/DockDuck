@@ -75,5 +75,5 @@ See more about DockDuck at https://github.com/duruyao/DockDuck
 ## 2.4. 卸载 DockDuck 工具集
 
 ```shell
-bash dk-uninstall.sh
+dk uninstall
 ```

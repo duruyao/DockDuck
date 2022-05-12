@@ -34,7 +34,7 @@ function info_ln() {
 
 function show_usage() {
   cat <<EOF
-Usage: $0 [OPTIONS]
+Usage: dk uninstall [OPTIONS]
 
 Uninstall dock-duck from \$DK_HOME
 

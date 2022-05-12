@@ -21,7 +21,7 @@
 dk_complete_func() {
   local curr=${COMP_WORDS[COMP_CWORD]}
 
-  local dk_sub_commands=("attach" "detach" "images" "ps" "run" "stop" "update")
+  local dk_sub_commands=("attach" "detach" "images" "ps" "run" "stop" "uninstall" "update")
   local dk_options=("-h" "--help" "-v" "--version")
   local dk_word_list=(
     ${dk_sub_commands[@]+"${dk_sub_commands[@]}"}
@@ -66,6 +66,11 @@ dk_complete_func() {
     ${containers[@]+"${containers[@]}"}
   )
 
+  local uninstall_options=("-h" "--help")
+  local uninstall_word_list=(
+    ${uninstall_options[@]+"${uninstall_options[@]}"}
+  )
+
   local update_options=("-h" "--help")
   local update_word_list=(
     ${update_options[@]+"${update_options[@]}"}
@@ -100,6 +105,10 @@ dk_complete_func() {
     "stop")
       # shellcheck disable=SC2207
       COMPREPLY=($(compgen -W "${stop_word_list[*]}" -- "${curr}"))
+      ;;
+    "uninstall")
+      # shellcheck disable=SC2207
+      COMPREPLY=($(compgen -W "${uninstall_word_list[*]}" -- "${curr}"))
       ;;
     "update")
       # shellcheck disable=SC2207

@@ -69,6 +69,7 @@ Commands:
   ps                            List running dock-duck containers
   run                           Run a command in a new dock-duck container
   stop                          Stop one or more running containers
+  uninstall                     Uninstall dock-duck tools
   update                        Update dock-duck tools
 
 Run 'dk COMMAND --help' for more information on a command
@@ -135,6 +136,12 @@ while (($#)); do
   stop)
     shift 1
     "${dk_tools_home}"/dk-stop "$@"
+    exit 0
+    ;;
+
+  uninstall)
+    shift 1
+    "${dk_tools_home}"/dk-uninstall "$@"
     exit 0
     ;;
 
