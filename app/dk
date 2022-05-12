@@ -21,14 +21,14 @@
 set -euo pipefail
 
 dk_home="$(dirname "$(realpath "$0")")"
-dk_data_home="${dk_home}/dk-data"
-dk_tools_home="${dk_home}/dk-tools"
+dk_data_home="${dk_home}/data"
+dk_tools_home="${dk_home}/tools"
+dk_containers_file="${dk_data_home}/containers.txt"
 
 mkdir -p "${dk_home}"
 mkdir -p "${dk_data_home}"
 mkdir -p "${dk_tools_home}"
 
-dk_containers_file="${dk_data_home}"/containers.txt
 if [ ! -f "${dk_containers_file}" ]; then
   echo "" >"${dk_containers_file}"
 fi

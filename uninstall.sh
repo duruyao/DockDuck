@@ -72,8 +72,8 @@ fi
 
 # shellcheck disable=SC2153
 dk_home="${DK_HOME}"
-dk_data_home="${dk_home}/dk-data"
-dk_tools_home="${dk_home}/dk-tools"
+dk_data_home="${dk_home}/data"
+dk_tools_home="${dk_home}/tools"
 
 rm -f "${dk_home}"/dk
 rm -rf "${dk_data_home}"/*.logo

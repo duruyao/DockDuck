@@ -83,8 +83,8 @@ chmod +x "${PWD}"/app/*
 chmod +x "${PWD}"/tools/*
 
 dk_home="${prefix}"
-dk_data_home="${dk_home}/dk-data"
-dk_tools_home="${dk_home}/dk-tools"
+dk_data_home="${dk_home}/data"
+dk_tools_home="${dk_home}/tools"
 
 if [ -f "${dk_home}/dk" ] || [ -d "${dk_tools_home}" ]; then
   warning_ln "Warning: There may already be a dock-duck ($("${dk_home}"/dk -v | sed "s/.* //")) in ${dk_home}"
