@@ -36,8 +36,10 @@ RUN apt-get install -y tmux
 RUN apt-get install -y openssh-server rsync sshpass
 RUN apt-get install -y curl wget
 
+## expose container ports
 EXPOSE 22 1234
 
+## copy files to image
 COPY conf /duck
 COPY login /duck
 

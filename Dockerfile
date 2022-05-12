@@ -36,8 +36,10 @@ RUN apt-get install -y tmux
 RUN apt-get install -y openssh-server rsync sshpass
 RUN apt-get install -y curl wget
 
+## expose container ports
 EXPOSE 22 1234
 
+## copy files to image
 COPY conf /duck
 COPY login /duck
 
@@ -77,15 +79,8 @@ RUN cat /duck/root.bashrc >>~/.bashrc
 ## however, the following line is invalid for environment variables which are loaded at runtime
 #  RUN env | grep -E -v "^(HOME=|USER=|MAIL=|LC_ALL=|LS_COLORS=|LANG=|HOSTNAME=|PWD=|TERM=|SHLVL=|LANGUAGE=|_=|PS1=)" >>/etc/environment
 ## TODO: manually add missing environment variables, below is an example:
-#RUN echo "export CONDA_SHLVL=\"2\"" >>/duck/user.bashrc
-#RUN echo "export LD_LIBRARY_PATH=\"/usr/local/envs/mc/lib\"" >>/duck/user.bashrc
-#RUN echo "export CONDA_EXE=\"/usr/local/bin/conda\"" >>/duck/user.bashrc
-#RUN echo "export CONDA_PREFIX=\"/usr/local/envs/mc\"" >>/duck/user.bashrc
-#RUN echo "export CONDA_PREFIX_1=\"/usr/local\"" >>/duck/user.bashrc
-#RUN echo "export CONDA_PYTHON_EXE=\"/usr/local/bin/python\"" >>/duck/user.bashrc
-#RUN echo "export CONDA_PROMPT_MODIFIER=\"(mc)\"" >>/duck/user.bashrc
-#RUN echo "export PATH=\"/usr/local/envs/mc/bin:/usr/local/condabin:/usr/local/nvidia/bin:/usr/local/cuda/bin:\$PATH\"" >>/duck/user.bashrc
-#RUN echo "export CONDA_DEFAULT_ENV=\"mc\"" >>/duck/user.bashrc
+#  RUN echo "export LD_LIBRARY_PATH=\"/usr/local/envs/mc/lib\"" >>/duck/user.bashrc
+#  RUN echo "export PATH=\"/usr/local/envs/mc/bin:/usr/local/condabin:/usr/local/nvidia/bin:/usr/local/cuda/bin:\$PATH\"" >>/duck/user.bashrc
 
 ########################################################
 # add custom packages and development environment here #
