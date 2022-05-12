@@ -76,7 +76,7 @@ dk_data_home="${dk_home}/dk-data"
 dk_tools_home="${dk_home}/dk-tools"
 
 rm -f "${dk_home}"/dk
-rm -rf "${dk_data_home}"
+rm -rf "${dk_data_home}"/*.logo
 rm -rf "${dk_tools_home}"
 
 line="export DK_HOME=.*"

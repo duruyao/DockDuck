@@ -86,7 +86,7 @@ dk_home="${prefix}"
 dk_data_home="${dk_home}/dk-data"
 dk_tools_home="${dk_home}/dk-tools"
 
-if [ -f "${dk_home}/dk" ] || [ -d "${dk_data_home}" ] || [ -d "${dk_tools_home}" ]; then
+if [ -f "${dk_home}/dk" ] || [ -d "${dk_tools_home}" ]; then
   warning_ln "Warning: There may already be a dock-duck ($("${dk_home}"/dk -v | sed "s/.* //")) in ${dk_home}"
   # shellcheck disable=SC2162
   read -p "Do you want to continue installing the current version? [Y/n] " install_dk
