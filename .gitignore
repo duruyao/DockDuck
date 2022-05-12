@@ -10,7 +10,6 @@
 
 # Commitizen
 node_modules/
-package.json
 package-lock.json
 
 # Binaries for programs and plugins
