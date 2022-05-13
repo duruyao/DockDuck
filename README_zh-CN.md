@@ -29,13 +29,13 @@
 在构建前新镜像前根据你的需求修改 [Dockerfile](./Dockerfile) 。
 
 ```shell
-bash dk-build.sh [--name NEW_NAME] IMAGE
+bash build.sh [--name NEW_NAME] IMAGE
 ```
 
 ### 2.2. 安装 DockDuck 工具集
 
 ```shell
-bash dk-install.sh [DIRECTORT]
+bash install.sh [DIRECTORT]
 ```
 
 重载 Bash 配置。

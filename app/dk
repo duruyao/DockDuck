@@ -47,7 +47,7 @@ function info_ln() {
 
 function show_version() {
   cat <<EOF
-DockDuck v2022.05.10
+DockDuck v0.9.0 (2022-05-13)
 EOF
 }
 

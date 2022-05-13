@@ -29,13 +29,13 @@ There are some pre-built dock-duck images in the directory [duruyao/vimicro-ai](
 Modify the [Dockerfile](./Dockerfile) according to your needs before building.
 
 ```shell
-bash dk-build.sh [--name NEW_NAME] IMAGE
+bash build.sh [--name NEW_NAME] IMAGE
 ```
 
 ### 2.2. Install DockDuck Tools
 
 ```shell
-bash dk-install.sh [DIRECTORT]
+bash install.sh [DIRECTORT]
 ```
 
 Reload Bash configuration.
