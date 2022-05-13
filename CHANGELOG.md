@@ -1,3 +1,12 @@
+# [1.0.0](https://github.com/duruyao/DockDuck/compare/v0.9.0...v1.0.0) (2022-05-13)
+
+
+### Bug Fixes
+
+* handle non-word-breaking characters (`:`) in completion words ([b70b129](https://github.com/duruyao/DockDuck/commit/b70b129a7c0f4823f39e489ab84358b864bc19a3)), closes [#3](https://github.com/duruyao/DockDuck/issues/3)
+
+
+
 # 0.9.0 (2022-05-13)
 
 
