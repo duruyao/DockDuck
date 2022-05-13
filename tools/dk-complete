@@ -19,7 +19,8 @@
 ## desc:   autocomplete command line by pressing tab key
 
 dk_complete_func() {
-  local curr=${COMP_WORDS[COMP_CWORD]}
+  local cur
+  _get_comp_words_by_ref -n : cur
 
   local dk_sub_commands=("attach" "detach" "images" "ps" "run" "stop" "uninstall" "update")
   local dk_options=("-h" "--help" "-v" "--version")
@@ -78,44 +79,46 @@ dk_complete_func() {
 
   if [[ ${COMP_CWORD} -eq 1 ]]; then
     # shellcheck disable=SC2207
-    COMPREPLY=($(compgen -W "${dk_word_list[*]}" -- "${curr}"))
+    COMPREPLY=($(compgen -W "${dk_word_list[*]}" -- "${cur}"))
   else
-    local second=${COMP_WORDS[1]}
-    case "${second}" in
+    local word_1=${COMP_WORDS[1]}
+    case "${word_1}" in
     "attach")
       # shellcheck disable=SC2207
-      COMPREPLY=($(compgen -W "${attach_word_list[*]}" -- "${curr}"))
+      COMPREPLY=($(compgen -W "${attach_word_list[*]}" -- "${cur}"))
       ;;
     "detach")
       # shellcheck disable=SC2207
-      COMPREPLY=($(compgen -W "${detach_word_list[*]}" -- "${curr}"))
+      COMPREPLY=($(compgen -W "${detach_word_list[*]}" -- "${cur}"))
       ;;
     "images")
       # shellcheck disable=SC2207
-      COMPREPLY=($(compgen -W "${images_word_list[*]}" -- "${curr}"))
+      COMPREPLY=($(compgen -W "${images_word_list[*]}" -- "${cur}"))
       ;;
     "ps")
       # shellcheck disable=SC2207
-      COMPREPLY=($(compgen -W "${ps_word_list[*]}" -- "${curr}"))
+      COMPREPLY=($(compgen -W "${ps_word_list[*]}" -- "${cur}"))
       ;;
     "run")
       # shellcheck disable=SC2207
-      COMPREPLY=($(compgen -W "${run_word_list[*]}" -- "${curr}"))
+      COMPREPLY=($(compgen -W "${run_word_list[*]}" -- "${cur}"))
       ;;
     "stop")
       # shellcheck disable=SC2207
-      COMPREPLY=($(compgen -W "${stop_word_list[*]}" -- "${curr}"))
+      COMPREPLY=($(compgen -W "${stop_word_list[*]}" -- "${cur}"))
       ;;
     "uninstall")
       # shellcheck disable=SC2207
-      COMPREPLY=($(compgen -W "${uninstall_word_list[*]}" -- "${curr}"))
+      COMPREPLY=($(compgen -W "${uninstall_word_list[*]}" -- "${cur}"))
       ;;
     "update")
       # shellcheck disable=SC2207
-      COMPREPLY=($(compgen -W "${update_word_list[*]}" -- "${curr}"))
+      COMPREPLY=($(compgen -W "${update_word_list[*]}" -- "${cur}"))
       ;;
     esac
   fi
+
+  __ltrim_colon_completions "${cur}"
 }
 
 complete -F dk_complete_func dk
