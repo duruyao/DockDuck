@@ -56,27 +56,6 @@ See more about DockDuck at https://github.com/duruyao/DockDuck
 EOF
 }
 
-function show_usage_DEPRECATED() {
-  cat <<EOF
-Usage: dk run [OPTIONS] IMAGE -- [COMMAND]
-
-Run a command (default: "bash") in a new dock-duck container
-
-Options:
-  -d, --detach                  Run Container in background and print container ID
-      --dry-run                 Print the docker command to be run, but do not execute it
-      --gpus GPU-REQUEST        GPU devices to add to the container ("all" to pass all GPUs)
-  -h, --help                    Display this help message
-      --name STRING             Assign name to the container (default: "$USER.IMAGE.TAG")
-      --other-flags LIST        Append other flags to the command "docker run ..."
-  -p, --publish LIST            Publish a container's port(s) to the host (default: ALL_EXPOSED_PORTS:RANDOM_PORTS)
-  -v, --volume LIST             Bind mount a volume (default: "$PWD:$PWD")
-
-See more about DockDuck at https://github.com/duruyao/DockDuck
-
-EOF
-}
-
 image=""
 name=""
 dry_run=false
@@ -94,7 +73,6 @@ DOCKER_WORKDIR=("--workdir" "${PWD}")
 DOCKER_PUBLISH=()
 DOCKER_ENV=()
 DOCKER_DEVICES=()
-DOCKER_FLAGS=()
 DOCKER_IMAGE=()
 DOCKER_LOGIN=("bash" "--login" "/duck/with-the-same-user")
 DOCKER_COMMAND=("bash")
@@ -143,17 +121,6 @@ while (($#)); do
     #
     name="$2"
     DOCKER_NAME=("--name" "${name}") # assign to DOCKER_NAME
-    shift 2
-    ;;
-
-  --other-flags)
-    if [ -z "$2" ]; then
-      error_ln "Error: '$1' requires a non empty argument" >&2
-      show_usage >&2
-      exit 1
-    fi
-    DOCKER_FLAGS+=("$2") # assign to DOCKER_FLAGS
-    warning_ln "Warning: deprecated option: '--other-flags'"
     shift 2
     ;;
 
@@ -259,7 +226,6 @@ DOCKER_CMD=(${DOCKER_BINARY[@]+"${DOCKER_BINARY[@]}"} "run"
   ${DOCKER_PUBLISH[@]+"${DOCKER_PUBLISH[@]}"}
   ${DOCKER_ENV[@]+"${DOCKER_ENV[@]}"}
   ${DOCKER_DEVICES[@]+"${DOCKER_DEVICES[@]}"}
-  ${DOCKER_FLAGS[@]+"${DOCKER_FLAGS[@]}"}
   ${DOCKER_IMAGE[@]+"${DOCKER_IMAGE[@]}"}
   ${DOCKER_LOGIN[@]+"${DOCKER_LOGIN[@]}"}
   ${DOCKER_COMMAND[@]+"${DOCKER_COMMAND[@]}"})
