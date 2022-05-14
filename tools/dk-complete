@@ -37,7 +37,7 @@ dk_complete_func() {
     ${containers[@]+"${containers[@]}"}
   )
 
-  local detach_options=("--dry-run" "--gpus" "-h" "--help" "--name" "--other-flags" "-p" "--publish" "-v" "--volume")
+  local detach_options=("--dry-run" "--gpus" "-h" "--help" "--name" "-p" "--publish" "-v" "--volume")
   # shellcheck disable=SC2207
   local images=($(docker images --format "table {{.Repository}}:{{.Tag}}" | tail -n +2))
   local detach_word_list=(
@@ -55,7 +55,7 @@ dk_complete_func() {
     ${ps_options[@]+"${ps_options[@]}"}
   )
 
-  local run_options=("--dry-run" "--gpus" "-h" "--help" "--name" "--other-flags" "-p" "--publish" "-v" "--volume")
+  local run_options=("--dry-run" "--gpus" "-h" "--help" "--name" "-p" "--publish" "-v" "--volume")
   local run_word_list=(
     ${run_options[@]+"${run_options[@]}"}
     ${images[@]+"${images[@]}"}
