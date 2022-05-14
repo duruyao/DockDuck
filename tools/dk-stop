@@ -60,11 +60,10 @@ See more about DockDuck at https://github.com/duruyao/DockDuck
 EOF
 }
 
-containers=()
 dry_run=false
 
 DOCKER_BINARY=("docker")
-DOCKER_NAMES=()
+DOCKER_CONTAINERS=()
 
 ## parse arguments
 while (($#)); do
@@ -87,38 +86,35 @@ while (($#)); do
 
   *)
     # check if container is valid
-    if ! docker ps | grep -q "$1"; then
-      warning_ln "Warning: No such container: '$1'"
-    else
-      containers+=("$1")
-      # select name according to the container
-      name="$(docker ps | grep "$1" | sed "s/ .*//g")"
-      DOCKER_NAMES+=("${name}")
+    if ! docker ps --format "table {{.Names}}" | tail -n +2 | grep -q "$1"; then
+      error_ln "Error: No such container: '$1'" >&2
+      show_usage >&2
+      exit 1
     fi
+    DOCKER_CONTAINERS+=("$1")
     shift 1
     ;;
   esac
 done
 
-if [ 0 == ${#containers[@]} ]; then
-  containers+=("${default_container}")
-  DOCKER_NAMES+=("${default_container}")
+if [ 0 == ${#DOCKER_CONTAINERS[@]} ]; then
+  DOCKER_CONTAINERS=("${default_container}")
 fi
 
-if [ 0 == ${#containers[@]} ]; then
+if [ 0 == ${#DOCKER_CONTAINERS[@]} ]; then
   error_ln "Error: Missing CONTAINER" >&2
   show_usage >&2
   exit 1
 fi
 
 DOCKER_CMD=(${DOCKER_BINARY[@]+"${DOCKER_BINARY[@]}"} "stop"
-  ${DOCKER_NAMES[@]+"${DOCKER_NAMES[@]}"})
+  ${DOCKER_CONTAINERS[@]+"${DOCKER_CONTAINERS[@]}"})
 
 if ${dry_run}; then
   echo ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"}
 else
   ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"} || exit 1
-  for name in "${DOCKER_NAMES[@]}"; do
+  for name in "${DOCKER_CONTAINERS[@]}"; do
     sed -i "/${name}/d" "${dk_containers_file}"
   done
 fi
