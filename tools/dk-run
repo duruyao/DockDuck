@@ -236,7 +236,7 @@ DOCKER_CMD=(${DOCKER_BINARY[@]+"${DOCKER_BINARY[@]}"} "run"
 if ${dry_run}; then
   echo ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"}
 else
-  sed -i "1i ${name}" "${dk_containers_file}"
+  echo "${name}" >>"${dk_containers_file}"
   ${DOCKER_CMD[@]+"${DOCKER_CMD[@]}"}
   sed -i "/${name}/d" "${dk_containers_file}"
 fi

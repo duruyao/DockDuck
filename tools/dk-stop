@@ -28,7 +28,7 @@ dk_containers_file="${dk_data_home}/containers.txt"
 default_container=""
 default_container_info=""
 "${dk_tools_home}"/dk-ps 1>/dev/null 2>&1
-if [ -n "$(head -1 "${dk_containers_file}")" ]; then
+if [ -n "$(tail -1 "${dk_containers_file}")" ]; then
   default_container="$(head -1 "${dk_containers_file}")"
   default_container_info="(default: \"${default_container}\")"
 fi
