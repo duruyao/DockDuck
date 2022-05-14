@@ -177,10 +177,13 @@ while (($#)); do
       DOCKER_IMAGE=("${image}") # assign to DOCKER_IMAGE
       if [ -z "${name}" ]; then
         name="${USER}.${repo//*\//}.${tag}"
-        # TODO: check if container exists
-        #
-        # TODO: rename container to a valid name
-        #
+        cnt=0
+        new_name="${name}"
+        while docker ps --format "table {{.Names}}" | tail -n +2 | grep -q "${new_name}"; do
+          cnt=$((cnt + 1))
+          new_name="${name}.${cnt}"
+        done
+        name="${new_name}"
         DOCKER_NAME=("--name" "${name}") # assign to DOCKER_NAME
       fi
       shift 1
