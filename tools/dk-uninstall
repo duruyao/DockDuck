@@ -80,7 +80,7 @@ rm -rf "${dk_app_home}"
 rm -rf "${dk_img_home}"
 rm -rf "${dk_tools_home}"
 
-sed -i "/DockDuck/d" "${HOME}"/.bashrc
+sed -i "/DockDuck Bash Config/d" "${HOME}"/.bashrc
 
 echo "Uninstall dock-duck from ${dk_home}"
 echo ""

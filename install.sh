@@ -96,7 +96,7 @@ dk_data_home="${dk_home}/data"
 dk_tools_home="${dk_home}/tools"
 
 if [ -d "${dk_app_home}" ] || [ -d "${dk_img_home}" ] || [ -d "${dk_tools_home}" ]; then
-  warning_ln "Warning: There may already be a dock-duck (v$("${dk_home}"/dk -v | grep -o "[0-9]\+\.[0-9]\+\.[0-9]\+")) in ${dk_home}"
+  warning_ln "Warning: There may already be a old dock-duck in ${dk_home}"
   # shellcheck disable=SC2162
   read -p "Do you want to continue installing the current version? [Y/n] " install_dk
   # shellcheck disable=SC2143
@@ -130,14 +130,13 @@ if ${debug}; then
   done
 fi
 
-bash_config="
-### DockDuck Bash Config Begin
+bash_config="# >>> DockDuck Bash Config Begin >>>
 export DK_HOME=\"${dk_home}\" # DockDuck Bash Config
 export PATH=\"\$DK_HOME/app:\$PATH\" # DockDuck Bash Config
 source \"\$DK_HOME/tools/dk-complete\" # DockDuck Bash Config
-### DockDuck Bash Config End
-"
+# <<< DockDuck Bash Config End   <<<"
 
+sed -i "/DockDuck Bash Config/d" "${HOME}"/.bashrc
 echo "${bash_config}" >>"${HOME}"/.bashrc
 
 echo "Install dock-duck to ${dk_home}"
