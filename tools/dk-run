@@ -208,11 +208,12 @@ DOCKER_ENV+=("--env" "BUILD_HOME=/$(id -u -n)") # assign to DOCKER_ENV
 
 # shellcheck disable=SC2207
 exposed_ports=($(docker inspect --format="{{.Config.ExposedPorts}}" "${image}" | sed "s/^map\[//" | sed "s/\]$//" | sed "s/\/tcp:{}//g"))
-RANDOM=$(echo "${USER}+${image}+${name}" | md5sum | head -c 5)
+seed=$(echo "${USER}+${image}+${name}" | md5sum | head -c 32)
+RANDOM=$((16#${seed}))
 if [ 0 = ${#DOCKER_PUBLISH[@]} ]; then
   for port in "${exposed_ports[@]}"; do
     host_port=$((RANDOM % 655353 + 1024))
-    while grep -q "${host_port}" /etc/services; do
+    while grep -q "${host_port}" /etc/services || docker ps --format "{{.Ports}}" | grep -q ":${host_port}"; do
       host_port=$((RANDOM % 655353 + 1024))
     done
     DOCKER_PUBLISH+=("--publish" "${host_port}:${port}") # assign to DOCKER_VOLUME
