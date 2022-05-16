@@ -1,3 +1,27 @@
+# [1.1.0](https://github.com/duruyao/DockDuck/compare/v1.0.0...v1.1.0) (2022-05-16)
+
+
+### Bug Fixes
+
+* change ports mapping ([de93c66](https://github.com/duruyao/DockDuck/commit/de93c6676315e0a81b27b0a8538f5ac92e7a11b9)), closes [#6](https://github.com/duruyao/DockDuck/issues/6)
+* fix bug that writing other containers to data file ([7410f05](https://github.com/duruyao/DockDuck/commit/7410f0574ca624c1024477f391722e015b026b9a))
+* fix method of initializing seed ([72fc995](https://github.com/duruyao/DockDuck/commit/72fc995d1d01c09f6c1a59105d02549f0003b909)), closes [#7](https://github.com/duruyao/DockDuck/issues/7)
+* update the tools `dk-attach` and `dk-stop` ([567c1b5](https://github.com/duruyao/DockDuck/commit/567c1b5b7d54576c61cb0845469a1ac8e76f0301)), closes [#5](https://github.com/duruyao/DockDuck/issues/5)
+* write a non-existed container name to the empty data file ([ba54a92](https://github.com/duruyao/DockDuck/commit/ba54a925f27402ea2ff6360396742bbf20c12cee)), closes [#8](https://github.com/duruyao/DockDuck/issues/8)
+
+
+### Features
+
+* add debug mode for developer ([e6f33eb](https://github.com/duruyao/DockDuck/commit/e6f33eb5fe06adf67107298a65bc0f0200b17ecf))
+* automatically generate unique container name ([01560e9](https://github.com/duruyao/DockDuck/commit/01560e9c5ae1171b63742824330e69843061bb8d))
+
+
+### Performance Improvements
+
+* search images and containers by using `docker <ps|images> --format STRING --filter FILTER` ([6237ba1](https://github.com/duruyao/DockDuck/commit/6237ba1a7fb69df194bd3fa92c1499da32ec36bd))
+
+
+
 # [1.0.0](https://github.com/duruyao/DockDuck/compare/v0.9.0...v1.0.0) (2022-05-13)
 
 
