@@ -66,9 +66,9 @@ while (($#)); do
   esac
 done
 
-containers=""
+filters=()
 while read -r line; do
-  containers+="|${line}"
+  filters+=("--filter" "name=${line}")
 done <"${dk_containers_file}"
-docker ps | grep -E "NAMES${containers}"
-docker ps --format "table {{.Names}}" | grep -E "${containers}" | tail -n +2 >"${dk_containers_file}"
+docker ps ${filters[@]+"${filters[@]}"}
+docker ps --format "{{.Names}}" ${filters[@]+"${filters[@]}"} >"${dk_containers_file}"
