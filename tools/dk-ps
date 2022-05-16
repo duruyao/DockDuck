@@ -66,6 +66,7 @@ while (($#)); do
   esac
 done
 
+echo "NON-EXISTENT_CONTAINER" >>"${dk_containers_file}"
 filters=()
 while read -r line; do
   filters+=("--filter" "name=${line}")
