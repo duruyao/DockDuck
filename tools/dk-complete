@@ -31,7 +31,7 @@ dk_complete_func() {
 
   local attach_options=("--dry-run" "-h" "--help")
   # shellcheck disable=SC2207
-  local containers=($(docker ps --format "table {{.Names}}" | tail -n +2))
+  local containers=($(docker ps --format "{{.Names}}"))
   local attach_word_list=(
     ${attach_options[@]+"${attach_options[@]}"}
     ${containers[@]+"${containers[@]}"}

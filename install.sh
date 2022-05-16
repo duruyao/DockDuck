@@ -62,7 +62,7 @@ while (($#)); do
       error_ln "Error: '$1' requires a non empty argument" >&2
       show_usage >&2
       exit 1
-    elif [ ! -d "$2" ]; then
+    elif ! [ -d "$2" ]; then
       error_ln "Error: No such directory: '$2'" >&2
       show_usage >&2
       exit 1

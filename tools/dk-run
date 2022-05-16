@@ -179,7 +179,7 @@ while (($#)); do
         name="${USER}.${repo//*\//}.${tag}"
         cnt=0
         new_name="${name}"
-        while docker ps --format "table {{.Names}}" | tail -n +2 | grep -q "${new_name}"; do
+        while [ "$(docker ps --format "{{.Names}}" --filter name="${new_name}")" ]; do
           cnt=$((cnt + 1))
           new_name="${name}.${cnt}"
         done

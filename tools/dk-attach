@@ -86,7 +86,7 @@ while (($#)); do
 
   *)
     # check if container is valid
-    if ! docker ps --format "table {{.Names}}" | tail -n +2 | grep -q "$1"; then
+    if ! [ "$(docker ps --format "{{.Names}}" --filter name="$1")" ]; then
       error_ln "Error: No such container: '$1'" >&2
       show_usage >&2
       exit 1
