@@ -72,22 +72,16 @@ fi
 
 # shellcheck disable=SC2153
 dk_home="${DK_HOME}"
-dk_data_home="${dk_home}/data"
-dk_tools_home="${dk_home}/tools"
+dk_app_home="${dk_home}"/app
+dk_img_home="${dk_home}"/img
+dk_tools_home="${dk_home}"/tools
 
-rm -f "${dk_home}"/dk
-rm -rf "${dk_data_home}"/*.logo
+rm -rf "${dk_app_home}"
+rm -rf "${dk_img_home}"
 rm -rf "${dk_tools_home}"
 
-line="export DK_HOME=.*"
-sed -i "/${line}/d" "${HOME}"/.bashrc
-
-line="export PATH=\"\$DK_HOME:\$PATH\""
-sed -i "/${line}/d" "${HOME}"/.bashrc
-
-line="source \$DK_HOME.*"
-sed -i "/${line}/d" "${HOME}"/.bashrc
-
-source "${HOME}"/.bashrc
+sed -i "/DockDuck/d" "${HOME}"/.bashrc
 
 echo "Uninstall dock-duck from ${dk_home}"
+echo ""
+echo "Try 'source ~/.bashrc' to reload PATH"

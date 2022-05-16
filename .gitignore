@@ -6,6 +6,7 @@
 *.old*
 *.bak*
 *.swp
+data/
 *~
 
 # Commitizen

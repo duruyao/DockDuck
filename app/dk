@@ -20,7 +20,8 @@
 
 set -euo pipefail
 
-dk_home="$(dirname "$(realpath "$0")")"
+dk_home="$(dirname "$(dirname "$(realpath "$0")")")"
+dk_img_home="${dk_home}/img"
 dk_data_home="${dk_home}/data"
 dk_tools_home="${dk_home}/tools"
 dk_containers_file="${dk_data_home}/containers.txt"
@@ -49,7 +50,7 @@ EOF
 }
 
 function show_usage() {
-  cat "${dk_data_home}"/duck.logo
+  cat "${dk_img_home}"/duck.logo
   cat <<EOF
 Usage: dk [OPTIONS] [COMMAND]
 
