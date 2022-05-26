@@ -15,8 +15,12 @@ It has the following features:
 
 ## 1. Prerequisites
 
-- [GNU Bash](https://www.gnu.org/software/bash/)
+- [Docker](https://www.docker.com/)
+- [NVIDIA Docker](https://github.com/NVIDIA/nvidia-docker) (may be required)
 - [UNIX-like OS](https://en.wikipedia.org/wiki/Unix-like)
+- [GNU Bash](https://www.gnu.org/software/bash/)
+- [GNU Grep](https://www.gnu.org/software/grep/)
+- [GNU sed](https://www.gnu.org/software/sed/)
 
 ## 2. Quick Start
 
